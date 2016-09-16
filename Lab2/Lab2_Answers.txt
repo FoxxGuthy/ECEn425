@@ -1,0 +1,30 @@
+Seth Guthrie
+ECEn 425, Fall 2016
+9/15/2016
+
+------------------------ LAB 2 RESPONSES -----------------------------
+
+1. Function a() begins at address 0x08A0
+2. Is the address I would use to set a breakpoint for fibonacci. 0x091E
+3. Type "b 0x091E" to set the breakpoint. 
+4. Press "b" to look at all breakpoints. Removed breakpoint 0 by typing "c 0".
+5. Global variable k is stored at 0x09B2
+6. "dumpw k"
+7. To put a memory monitor on k when it was modified type "mm k". If k was a char you could use the mX ADDR [SIZE] command. "mm k 1" since a char is only 1 bit and not 2. 2 is the default. 
+8. "m" is used to view current memory monitors. To remove monitor 3, type "n 3"
+9. pw 0x09B2 0x113
+10. address of i 0x088A (i is static and preallocated)
+11. address of i 0x088A
+12. 0xFFF6
+13.	0xFFF2
+14. "fb ax 0x333"
+15. hist
+16. 0xFFFE
+17. The stack grows down (decreasing memory addresses)
+18. 0xFFC4 is the farthest the sp gets from intial. 
+19. The moves 'above' the bp to [bp+4] and moves the value into dx
+20. Return values are added to the ax register until sp/bp are back at original positions. 
+21. "add sp, 2" returns the stack pointer to its previous position after a function call. It is effectively a "pop" of the variables that were pushed. 
+22. 0x83C402. 3 bytes. The right most byte are the "2"
+23. TIMES 2 db 0 allocates 2 bytes for the global variable K. It is filled with 0
+
