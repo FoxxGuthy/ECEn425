@@ -1135,7 +1135,7 @@
   1133 | 00000895 | FB                        | 	sti		; allow interrupts
   1134 |          |                           | 
   1135 | 00000896 | E84900                    | 	call tickHandler
-  1136 | 00000899 | E82EFB                    | 	call signalEOI
+  1136 | 00000899 | E82EFB                    | 	call signalEOI ; signal that the interrupt is done
   1137 |          |                           | 
   1138 | 0000089C | FA                        | 	cli		; dis allow interrupts
   1139 |          |                           | 		
@@ -1165,7 +1165,7 @@
   1163 | 000008B0 | FB                        | 	sti		; allow interrupts 
   1164 |          |                           | 
   1165 | 000008B1 | E88E00                    | 	call kbHandler
-  1166 | 000008B4 | E813FB                    | 	call signalEOI
+  1166 | 000008B4 | E813FB                    | 	call signalEOI ; signal that the interrupt is done
   1167 |          |                           | 
   1168 | 000008B7 | FA                        | 	cli		; dis allow interrupts
   1169 |          |                           | 
