@@ -1,5 +1,6 @@
 // header file for YAK kernel. Contains function prototypes
 // and extern declarations of some global variables.
+#include "yaku.h"
 
 void YKInitialize(void);
 
