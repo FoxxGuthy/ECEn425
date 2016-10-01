@@ -6,11 +6,11 @@ L_yakc_1:
 	DB	"IN YKINITIALIZE",0
 	ALIGN	2
 YKInitialize:
-	; >>>>> Line:	14
+	; >>>>> Line:	16
 	; >>>>> void YKInitialize(void){ 
 	jmp	L_yakc_2
 L_yakc_3:
-	; >>>>> Line:	17
+	; >>>>> Line:	19
 	; >>>>> printString("IN YKINITIALIZE"); 
 	mov	ax, L_yakc_1
 	push	ax
@@ -24,5 +24,112 @@ L_yakc_2:
 	mov	bp, sp
 	jmp	L_yakc_3
 	ALIGN	2
+YKEnterMutex:
+	; >>>>> Line:	22
+	; >>>>> void YKEnterMutex(void){ 
+	jmp	L_yakc_5
+L_yakc_6:
+	; >>>>> Line:	25
+	; >>>>> } 
+	mov	sp, bp
+	pop	bp
+	ret
+L_yakc_5:
+	push	bp
+	mov	bp, sp
+	jmp	L_yakc_6
+	ALIGN	2
+YKExitMutex:
+	; >>>>> Line:	27
+	; >>>>> void YKExitMutex(void){ 
+	jmp	L_yakc_8
+L_yakc_9:
+	; >>>>> Line:	29
+	; >>>>> } 
+	mov	sp, bp
+	pop	bp
+	ret
+L_yakc_8:
+	push	bp
+	mov	bp, sp
+	jmp	L_yakc_9
+	ALIGN	2
+YKIdleTask:
+	; >>>>> Line:	31
+	; >>>>> void YKIdleTask(void){ 
+	jmp	L_yakc_11
+L_yakc_12:
+	; >>>>> Line:	33
+	; >>>>> } 
+	mov	sp, bp
+	pop	bp
+	ret
+L_yakc_11:
+	push	bp
+	mov	bp, sp
+	jmp	L_yakc_12
+	ALIGN	2
+YKNewTask:
+	; >>>>> Line:	35
+	; >>>>> void YKNewTask(void (* task)(void), void *taskStack, unsigned char priority){ 
+	jmp	L_yakc_14
+L_yakc_15:
+	; >>>>> Line:	37
+	; >>>>> } 
+	mov	sp, bp
+	pop	bp
+	ret
+L_yakc_14:
+	push	bp
+	mov	bp, sp
+	jmp	L_yakc_15
+	ALIGN	2
+YKRun:
+	; >>>>> Line:	39
+	; >>>>> void YKRun(void){ 
+	jmp	L_yakc_17
+L_yakc_18:
+	; >>>>> Line:	41
+	; >>>>> } 
+	mov	sp, bp
+	pop	bp
+	ret
+L_yakc_17:
+	push	bp
+	mov	bp, sp
+	jmp	L_yakc_18
+	ALIGN	2
+YKScheduler:
+	; >>>>> Line:	43
+	; >>>>> void YKScheduler(void){ 
+	jmp	L_yakc_20
+L_yakc_21:
+	; >>>>> Line:	45
+	; >>>>> } 
+	mov	sp, bp
+	pop	bp
+	ret
+L_yakc_20:
+	push	bp
+	mov	bp, sp
+	jmp	L_yakc_21
+	ALIGN	2
+YKDispatcher:
+	; >>>>> Line:	47
+	; >>>>> void YKDispatcher(void){ 
+	jmp	L_yakc_23
+L_yakc_24:
+	; >>>>> Line:	49
+	; >>>>> } 
+	mov	sp, bp
+	pop	bp
+	ret
+L_yakc_23:
+	push	bp
+	mov	bp, sp
+	jmp	L_yakc_24
+	ALIGN	2
+YKCtxSwCount:
+	TIMES	2 db 0
 TCBArray:
 	TIMES	30 db 0
