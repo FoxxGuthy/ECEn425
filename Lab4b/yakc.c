@@ -1,8 +1,18 @@
+/*STATE OF THE PROGRAM
+
+CRASHES During YKDISPATCH -
+Problems: 	currentTask and nextTask are not being accessed correctly. Data members not correct.
+			Can't push ip onto the stack
+			(Know how to fix, need to do) -- YKNewTask doesn't actually insert into correct spot
+
+*/
+
 #include "yakk.h"
 #include "clib.h"
 
 #define DELAYED 0
 #define READY 1
+
 
 // Task-Control-Block that holds the information for each running task
 struct TCB {
@@ -18,10 +28,13 @@ struct TCB {
 struct TCB TCBArray[MAXTASKS];
 
 
+
 int YKCtxSwCount = 0; // global variable used to track number of context switches
 int YKIdleCount = 0;
 int YKTickNum = 0;
 struct TCB *taskhead;
+struct TCB *currentTask = NULL;
+struct TCB *nextTask;
 char YKKernalStarted = 0;
 
 int TCBIdx = 0; // variable used to indicate the next ready TCB object in array
@@ -39,14 +52,6 @@ void YKInitialize(void){
 	
 }
 
-void YKEnterMutex(void){
-
-	
-}
-
-void YKExitMutex(void){
-
-}
 
 void YKIdleTask(void){
 	printString("IN YKIdleTask");
@@ -97,6 +102,8 @@ void dumpLists(){
 }
 
 void YKRun(void){
+	printString("IN YKRun");
+	printNewLine();
     /* Set global flag to indicate kernel started */
 	YKKernalStarted = 1;
     /* Call scheduler */
@@ -104,19 +111,28 @@ void YKRun(void){
 }
 
 void YKScheduler(void){
-	struct TCB *nextTask;
 	struct TCB *traveser;
 	traveser = taskhead;
+	printString("IN YKScheduler");
+	printNewLine();
 	while(traveser){
 		if(traveser->state == READY){
 			nextTask = traveser;
 			break;
 		}
 	}
+
+	if(nextTask != currentTask){
+		currentTask = nextTask;
+		// call the dispatcher
+		YKDispatcher();
+		
+	}
 	
 }
 
-void YKDispatcher(void){
 
-}
+
+
+
 

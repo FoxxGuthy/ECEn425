@@ -4,9 +4,9 @@
 
 void YKInitialize(void);
 
-void YKEnterMutex(void);
+void YKEnterMutex(void); // this is an assembly function. declare here
 
-void YKExitMutex(void);
+void YKExitMutex(void); // this is an assembly function. declare here
 
 void YKIdleTask(void);
 
@@ -16,7 +16,7 @@ void YKRun(void);
 
 void YKScheduler(void);
 
-void YKDispatcher(void);
+void YKDispatcher(); // this is an assembly function. declare here
 
 extern int YKCtxSwCount;
 
