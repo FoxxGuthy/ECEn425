@@ -1,9 +1,7 @@
 /*STATE OF THE PROGRAM
 
 CRASHES During YKDISPATCH -
-Problems: 	currentTask and nextTask are not being accessed correctly. Data members not correct.
-			Can't push ip onto the stack
-			(Know how to fix, need to do) -- YKNewTask doesn't actually insert into correct spot
+Problems: 	(Know how to fix, need to do) -- YKNewTask doesn't actually insert into correct spot
 
 */
 
@@ -16,8 +14,7 @@ Problems: 	currentTask and nextTask are not being accessed correctly. Data membe
 
 // Task-Control-Block that holds the information for each running task
 struct TCB {
-    int *sp;        // stack pointer
-    int programCounter;
+    unsigned *sp;        // stack pointer
     unsigned char state;// = 0; // running = 1, delayed, suspended
     unsigned char priority;// = 0;
     struct TCB *nextTask;
@@ -49,7 +46,9 @@ void YKInitialize(void){
 
 	printString("IN YKINITIALIZE");
 	YKNewTask(YKIdleTask, (void *)&YKIdleStk[IDLESTACKSIZE], 100);
-	
+	// the idle task will always be initialized to memory index of 0
+	// since the operating system needs a current task to start with, will say the current task is the IDLE task
+	currentTask = &TCBArray[0];
 }
 
 
@@ -58,11 +57,43 @@ void YKIdleTask(void){
 }
 
 void YKNewTask(void (* task)(void), void *taskStack, unsigned char priority){
-
+	//int i = 3;
+	unsigned *newSP;
 	TCBArray[TCBIdx].state = READY;
 	TCBArray[TCBIdx].priority = priority;
-	TCBArray[TCBIdx].sp = taskStack;
+	//TCBArray[TCBIdx].sp = taskStack;
 	TCBArray[TCBIdx].delayCount = 0;
+	
+	newSP = (unsigned *) taskStack - 11;
+	
+	/*	
+	pop		ds		; pop everything but ip, cs, and flags (reverse order of course)
+	pop		es
+	pop		bp
+	pop		di
+	pop		si
+	pop		dx
+	pop		cx
+	pop		bx
+	pop		ax
+	iret			; start next task. iret takes care of ip, cs, and flags
+	*/
+
+	newSP[0] = 0;					// initialize the ds register
+	newSP[1] = 0;					// initialize the es register
+	newSP[2] = 0;					// initialize the bp register
+	newSP[3] = 0;					// initialize the di register
+	newSP[4] = 0;					// initialize the si register
+	newSP[5] = 0;					// initialize the dx register
+	newSP[6] = 0;					// initialize the cx register
+	newSP[7] = 0;					// initialize the bx register
+	newSP[7] = 0;					// initialize the ax register
+	newSP[8] = (unsigned) task;				// initialize the ip "register" on the stack
+	newSP[9] = 0;					// initialize the cs "register" on the stack
+	newSP[10] = 0x0200;		// initialize the flags "register" on the stack
+	
+	TCBArray[TCBIdx].sp = newSP-1;
+
 
 	if(TCBIdx == 0){
 		taskhead = &TCBArray[TCBIdx];
@@ -123,9 +154,12 @@ void YKScheduler(void){
 	}
 
 	if(nextTask != currentTask){
-		currentTask = nextTask;
+
 		// call the dispatcher
+		//printString("Calling Dispatcher");
+		//printNewLine();
 		YKDispatcher();
+		currentTask = nextTask;
 		
 	}
 	
