@@ -100,13 +100,25 @@ void YKNewTask(void (* task)(void), void *taskStack, unsigned char priority){
 		TCBArray[TCBIdx].nextTask = NULL;
 
 	}else{
-		struct TCB *traveser;
-		traveser = taskhead;
+
 		if(priority < taskhead->priority){
 		
 			TCBArray[TCBIdx].nextTask = taskhead;
 			taskhead = &TCBArray[TCBIdx];
+		}else{
+			struct TCB *traveser;
+			traveser = taskhead;
+
+			while(traveser){
+				if(priority < traveser->nextTask->priority){
+					TCBArray[TCBIdx].nextTask = traveser->nextTask;
+					traveser->nextTask = &TCBArray[TCBIdx];
+					break;
+				}
+				traveser = traveser->nextTask;
+			}
 		}
+
 	}
 	TCBIdx++;
 	dumpLists();
@@ -151,6 +163,7 @@ void YKScheduler(void){
 			nextTask = traveser;
 			break;
 		}
+		traveser = traveser->nextTask;
 	}
 
 	if(nextTask != currentTask){
