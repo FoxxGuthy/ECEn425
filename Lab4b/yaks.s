@@ -6,7 +6,6 @@ YKExitMutex:
 
 YKDispatcher:
 
-	;push	ip		; instruction pointer ; these 3 need to go first
 	push	cs		; code segment (segment to which IP refers)
 	pushf	    	; push the flags
 	labelDispatch:
@@ -23,10 +22,11 @@ YKDispatcher:
 	; currentTask is first parameter passed, nextTask is 2nd passed
 	; each TCB has 3 ints, 2 chars, and 1 struct pointer (6 things)
 
-	mov	[currentTask + 4], sp		; set sp and ip in TCB of currentTask
-	;mov [currentTask + 6], ip		;
+	mov bx, [currentTask]		; save currentTask
+	mov	[bx + 2], sp		; set sp and TCB of currentTask
 		
-	mov sp, [nextTask + 4]		; restore context of nextTask by getting sp from TB of nextTask
+	mov bx, [nextTask]		; save nextTask
+	mov sp, [bx + 2]		; restore context of nextTask by getting sp from TB of nextTask
 
 	pop		ds		; pop everything but ip, cs, and flags (reverse order of course)
 	pop		es
