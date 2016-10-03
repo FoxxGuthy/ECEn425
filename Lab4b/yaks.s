@@ -1,8 +1,10 @@
 YKEnterMutex:
 	cli				; disable interrupts
+	ret
 
 YKExitMutex:
 	sti				; enable interrupts
+	ret
 
 YKDispatcher:
 	push	cs		; code segment (segment to which IP refers)
@@ -21,7 +23,7 @@ YKDispatcher:
 	; currentTask is first parameter passed, nextTask is 2nd passed
 	; each TCB has 3 ints, 2 chars, and 1 struct pointer (6 things)
 
-	mov bx, [currentTask]		; save currentTask
+	mov bx, [taskSaveCTX]		; save currentTask
 	mov	[bx], sp		; set sp and TCB of currentTask
 		
 	mov bx, [nextTask]		; save nextTask

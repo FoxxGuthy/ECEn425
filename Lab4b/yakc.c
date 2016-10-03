@@ -31,6 +31,7 @@ int YKIdleCount = 0;
 int YKTickNum = 0;
 struct TCB *taskhead;
 struct TCB *currentTask = NULL;
+struct TCB *taskSaveCTX = NULL;
 struct TCB *nextTask;
 char YKKernalStarted = 0;
 
@@ -48,7 +49,7 @@ void YKInitialize(void){
 	YKNewTask(YKIdleTask, (void *)&YKIdleStk[IDLESTACKSIZE], 100);
 	// the idle task will always be initialized to memory index of 0
 	// since the operating system needs a current task to start with, will say the current task is the IDLE task
-	currentTask = &TCBArray[0];
+	taskSaveCTX = &TCBArray[0];
 }
 
 
@@ -122,6 +123,9 @@ void YKNewTask(void (* task)(void), void *taskStack, unsigned char priority){
 	}
 	TCBIdx++;
 	dumpLists();
+	if(YKKernalStarted == 1){
+		YKScheduler();
+	}
 }
 
 void dumpLists(){
@@ -168,11 +172,12 @@ void YKScheduler(void){
 
 	if(nextTask != currentTask){
 
-		// call the dispatcher
-		//printString("Calling Dispatcher");
-		//printNewLine();
-		YKDispatcher();
 		currentTask = nextTask;
+		printString("Calling Dispatcher to dispatch task with priority ");
+		printInt(nextTask->priority);
+		printNewLine();
+		YKDispatcher();
+
 		
 	}
 	
