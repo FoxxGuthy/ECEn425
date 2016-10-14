@@ -8,14 +8,17 @@ Problems: 	(Know how to fix, need to do) -- YKNewTask doesn't actually insert in
 #include "yakk.h"
 #include "clib.h"
 
-#define DELAYED 0
+#define BLOCKED 0
 #define READY 1
+#define RUNNING 2
+#define INTERRUPTED 3
 
+#define DEBUG_MODE 1
 
 // Task-Control-Block that holds the information for each running task
 struct TCB {
     unsigned *sp;        // stack pointer
-    unsigned char state;// = 0; // running = 1, delayed, suspended
+    unsigned char state; // 0 = ready, 1 = blocked, 2 = ??, 3 = ??
     unsigned char priority;// = 0;
     struct TCB *nextTask;
     int delayCount;// = 0;
@@ -45,7 +48,7 @@ int YKIdleStk[IDLESTACKSIZE];           /* Space for each task's stack */
 void YKInitialize(void){
 
 
-	printString("IN YKINITIALIZE");
+	printDebug("IN YKINITIALIZE");
 	YKNewTask(YKIdleTask, (void *)&YKIdleStk[IDLESTACKSIZE], 100);
 	// the idle task will always be initialized to memory index of 0
 	// since the operating system needs a current task to start with, will say the current task is the IDLE task
@@ -54,7 +57,11 @@ void YKInitialize(void){
 
 
 void YKIdleTask(void){
-	printString("IN YKIdleTask");
+	while(1){
+		YKEnterMutex();
+		YKIdleCount++;
+		YKExitMutex();
+	}
 }
 
 void YKNewTask(void (* task)(void), void *taskStack, unsigned char priority){
@@ -149,8 +156,7 @@ void dumpLists(){
 }
 
 void YKRun(void){
-	printString("IN YKRun");
-	printNewLine();
+	printDebug("IN YKRun");
     /* Set global flag to indicate kernel started */
 	YKKernalStarted = 1;
     /* Call scheduler */
@@ -160,8 +166,7 @@ void YKRun(void){
 void YKScheduler(void){
 	struct TCB *traveser;
 	traveser = taskhead;
-	printString("IN YKScheduler");
-	printNewLine();
+	printDebug("IN YKScheduler");
 	while(traveser){
 		if(traveser->state == READY){
 			nextTask = traveser;
@@ -183,9 +188,18 @@ void YKScheduler(void){
 	
 }
 
-void YKDelayTask(TCB* task, int delayCount) {
+void YKDelayTask(unsigned newDelayCount) {
 	// set task datamember to delayCount
 	// set ready = 0; // blocked
+
+	if(newDelayCount == 0){
+		return ;
+	}
+	currentTask->delayCount = newDelayCount;
+	currentTask->state = BLOCKED;
+
+	YKScheduler();
+	
 }
 
 void YKEnterISR(void) {
@@ -206,9 +220,43 @@ void YKTickHandler(void) {
 	// traverse the list of tasks (recall that we are only doing 1 list of tasks)
 	// If the task is blocked, decrement the delay count
 	// if the delay count is now 0, change the task status to ready
+	
+	YKTickNum++;
+	struct TCB *traveser;
+	traveser = taskhead;
+	printDebug("IN YKTickHandler");
+	while(traveser){
+		if(traveser->state == BLOCKED){
+			delayCount--;
+	
+			if(delayCount == 0){
+
+				if(DEBUG_MODE == 1){
+					printString("In YKTickHandler, task now READY with priority ");
+					printInt(traveser->priority);
+					printNewLine();
+				}
+
+				traveser->state = READY;
+			}
+			
+			if(delayCount < 0){
+				printString("SOMETHING HAS GONE HORRIBLY WRONG -- TASK HAS DELAY COUNT < 0. Priority: ");
+				printInt(traveser->priority);
+				printNewLine();
+			}	
+		
+		}
+		traveser = traveser->nextTask;
+	}
 }
 
 
-
+void printDebug(char *string) {
+	if(DEBUG_MODE == 1){
+		printString(string);
+		printNewLine();
+	}
+}
 
 
