@@ -4,6 +4,7 @@ resetISR:
 	call resetISRC
 
 tickISR:
+	tickLabel:
 	push	ax
 	push	bx
 	push	cx

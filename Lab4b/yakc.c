@@ -1,7 +1,6 @@
 /*STATE OF THE PROGRAM
 
-CRASHES During YKDISPATCH -
-Problems: 	(Know how to fix, need to do) -- YKNewTask doesn't actually insert into correct spot
+
 
 */
 
