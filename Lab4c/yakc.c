@@ -189,20 +189,23 @@ void YKDelayTask(TCB* task, int delayCount) {
 }
 
 void YKEnterISR(void) {
-	 /* Increment interrupt nesting level global variable */
-	// YKISRDepth++;
+	/* Increment interrupt nesting level global variable */
+	YKISRDepth++;
 }
 
 void YKExitISR(void) {
     /* Decrement interrupt nest level global variable */
-    
     /* If nesting level is 0, call scheduler */
+	YKISRDepth--;
+	if (YKISRDepth == 0) {
+		YKScheduler();
+	}
 }
 
 void YKTickHandler(void) {
 	// traverse the list of tasks (recall that we are only doing 1 list of tasks)
 	// If the task is blocked, decrement the delay count
-	//if the delay count is now 0, change the task status to ready
+	// if the delay count is now 0, change the task status to ready
 }
 
 
