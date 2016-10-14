@@ -13,11 +13,15 @@ tickISR:
 	push	bp
 	push	es
 	push	ds
-	sti
 
+	call 	YKEnterISR		;call before enabling interrupts again
+	sti
 	call	tickISRC
+	cli						; Note: due to notes in midterm review, EOI call and cli order have been swapped.
+							; it previously was call signalEOI THEN cli
 	call	signalEOI
-	cli
+	call 	YKExitISR
+
 	pop		ds
 	pop		es
 	pop		bp
@@ -41,10 +45,13 @@ kbISR:
 	push	es
 	push	ds
 
+	call 	YKEnterISR
 	sti
 	call	kbISRC
-	call	signalEOI
 	cli
+	call	signalEOI
+	call	YKExitISR
+
 	pop		ds
 	pop		es
 	pop		bp
