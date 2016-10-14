@@ -21,3 +21,13 @@ void YKDispatcher(); // this is an assembly function. declare here
 extern int YKCtxSwCount;
 
 extern int YKIdleCount;
+
+// Lab 4c functions
+
+void YKDelayTask(unsigned count);
+
+void YKEnterISR(void);
+
+void YKExitISR(void);
+
+void YKTickHandler(void);

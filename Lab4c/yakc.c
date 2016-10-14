@@ -24,7 +24,7 @@ struct TCB {
 // Allocation of memory for the tasks
 struct TCB TCBArray[MAXTASKS];
 
-
+int YKISRDepth = 0; // variable changed by EnterISR & ExitISR. represents ISR call depth
 
 int YKCtxSwCount = 0; // global variable used to track number of context switches
 int YKIdleCount = 0;
@@ -183,6 +183,27 @@ void YKScheduler(void){
 	
 }
 
+void YKDelayTask(TCB* task, int delayCount) {
+	// set task datamember to delayCount
+	// set ready = 0; // blocked
+}
+
+void YKEnterISR(void) {
+	 /* Increment interrupt nesting level global variable */
+	// YKISRDepth++;
+}
+
+void YKExitISR(void) {
+    /* Decrement interrupt nest level global variable */
+    
+    /* If nesting level is 0, call scheduler */
+}
+
+void YKTickHandler(void) {
+	// traverse the list of tasks (recall that we are only doing 1 list of tasks)
+	// If the task is blocked, decrement the delay count
+	//if the delay count is now 0, change the task status to ready
+}
 
 
 
