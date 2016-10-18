@@ -13,7 +13,7 @@ Problems: 	(Know how to fix, need to do) -- YKNewTask doesn't actually insert in
 #define RUNNING 2
 #define INTERRUPTED 3
 
-#define DEBUG_MODE 1
+#define DEBUG_MODE 0
 
 // Task-Control-Block that holds the information for each running task
 struct TCB {
@@ -54,7 +54,7 @@ void printDebug(char *string) {
 
 void YKInitialize(void){
 
-
+	YKEnterMutex();
 	printDebug("IN YKINITIALIZE - CHECK");
 	YKNewTask(YKIdleTask, (void *)&YKIdleStk[IDLESTACKSIZE], 100);
 	// the idle task will always be initialized to memory index of 0
@@ -184,11 +184,14 @@ void YKScheduler(char saveCTX){
 	}
 
 	if(nextTask != currentTask){
-
+		YKCtxSwCount++;
+		taskSaveCTX = currentTask;
 		currentTask = nextTask;
-		printString("Calling Dispatcher to dispatch task with priority ");
-		printInt(nextTask->priority);
-		printNewLine();
+		if(DEBUG_MODE){
+			printString("Calling Dispatcher to dispatch task with priority ");
+			printInt(nextTask->priority);
+			printNewLine();
+		}
 		YKDispatcher(saveCTX);
 
 		
@@ -220,7 +223,7 @@ void YKExitISR(void) {
     /* If nesting level is 0, call scheduler */
 	YKISRDepth--;
 	if (YKISRDepth == 0) {
-		YKScheduler(0);
+		YKScheduler(1);
 	}
 }
 
@@ -241,7 +244,7 @@ void YKTickHandler(void) {
 			if(traveser->delayCount == 0){
 
 				if(DEBUG_MODE == 1){
-					printString("In YKTickHandler, task now READY with priority ");
+					printString("task now READY with priority ");
 					printInt(traveser->priority);
 					printNewLine();
 				}

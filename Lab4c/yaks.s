@@ -11,7 +11,7 @@ YKsavecontext:
 	push	cs		; code segment (segment to which IP refers)
 	; PUSH THE INSTRUCTION POINTER
 	push word [bp+2]
-	labelDispatch:
+	labelSaveCtx:
 	push	ax
 	push	bx
 	push	cx
@@ -30,6 +30,7 @@ YKsavecontext:
 	jmp YKrestorecontext
 
 YKDispatcher:
+	labelDispatcher:
 	push 	bp					
 	mov 	bp, sp
 	push 	ax
