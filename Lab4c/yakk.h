@@ -14,9 +14,9 @@ void YKNewTask(void (* task)(void), void *taskStack, unsigned char priority);
 
 void YKRun(void);
 
-void YKScheduler(void);
+void YKScheduler(char saveCTX);
 
-void YKDispatcher(); // this is an assembly function. declare here
+void YKDispatcher(char saveCTX); // this is an assembly function. declare here
 
 extern int YKCtxSwCount;
 

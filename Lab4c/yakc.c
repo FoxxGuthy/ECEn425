@@ -45,19 +45,27 @@ void dumpLists(void);
 
 int YKIdleStk[IDLESTACKSIZE];           /* Space for each task's stack */
 
+void printDebug(char *string) {
+	if(DEBUG_MODE == 1){
+		printString(string);
+		printNewLine();
+	}
+}
+
 void YKInitialize(void){
 
 
-	printDebug("IN YKINITIALIZE");
+	printDebug("IN YKINITIALIZE - CHECK");
 	YKNewTask(YKIdleTask, (void *)&YKIdleStk[IDLESTACKSIZE], 100);
 	// the idle task will always be initialized to memory index of 0
 	// since the operating system needs a current task to start with, will say the current task is the IDLE task
-	taskSaveCTX = &TCBArray[0];
+	//taskSaveCTX = &TCBArray[0];
 }
 
 
 void YKIdleTask(void){
 	while(1){
+		//printDebug("IN YKIdleTask");
 		YKEnterMutex();
 		YKIdleCount++;
 		YKExitMutex();
@@ -131,7 +139,7 @@ void YKNewTask(void (* task)(void), void *taskStack, unsigned char priority){
 	TCBIdx++;
 	dumpLists();
 	if(YKKernalStarted == 1){
-		YKScheduler();
+		YKScheduler(1);
 	}
 }
 
@@ -160,10 +168,10 @@ void YKRun(void){
     /* Set global flag to indicate kernel started */
 	YKKernalStarted = 1;
     /* Call scheduler */
-	YKScheduler();
+	YKScheduler(0);
 }
 
-void YKScheduler(void){
+void YKScheduler(char saveCTX){
 	struct TCB *traveser;
 	traveser = taskhead;
 	printDebug("IN YKScheduler");
@@ -181,7 +189,7 @@ void YKScheduler(void){
 		printString("Calling Dispatcher to dispatch task with priority ");
 		printInt(nextTask->priority);
 		printNewLine();
-		YKDispatcher();
+		YKDispatcher(saveCTX);
 
 		
 	}
@@ -198,7 +206,7 @@ void YKDelayTask(unsigned newDelayCount) {
 	currentTask->delayCount = newDelayCount;
 	currentTask->state = BLOCKED;
 
-	YKScheduler();
+	YKScheduler(1);
 	
 }
 
@@ -212,7 +220,7 @@ void YKExitISR(void) {
     /* If nesting level is 0, call scheduler */
 	YKISRDepth--;
 	if (YKISRDepth == 0) {
-		YKScheduler();
+		YKScheduler(0);
 	}
 }
 
@@ -221,15 +229,16 @@ void YKTickHandler(void) {
 	// If the task is blocked, decrement the delay count
 	// if the delay count is now 0, change the task status to ready
 	
-	YKTickNum++;
 	struct TCB *traveser;
 	traveser = taskhead;
+
+	YKTickNum++;
 	printDebug("IN YKTickHandler");
 	while(traveser){
 		if(traveser->state == BLOCKED){
-			delayCount--;
+			traveser->delayCount--;
 	
-			if(delayCount == 0){
+			if(traveser->delayCount == 0){
 
 				if(DEBUG_MODE == 1){
 					printString("In YKTickHandler, task now READY with priority ");
@@ -240,7 +249,7 @@ void YKTickHandler(void) {
 				traveser->state = READY;
 			}
 			
-			if(delayCount < 0){
+			if(traveser->delayCount < 0){
 				printString("SOMETHING HAS GONE HORRIBLY WRONG -- TASK HAS DELAY COUNT < 0. Priority: ");
 				printInt(traveser->priority);
 				printNewLine();
@@ -248,14 +257,6 @@ void YKTickHandler(void) {
 		
 		}
 		traveser = traveser->nextTask;
-	}
-}
-
-
-void printDebug(char *string) {
-	if(DEBUG_MODE == 1){
-		printString(string);
-		printNewLine();
 	}
 }
 

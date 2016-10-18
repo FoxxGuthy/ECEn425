@@ -12,6 +12,7 @@ void tickISRC(void) {
 	printString("TICK ");
 	printInt(tickCount);
 	printNewLine();
+	YKTickHandler();
 }
 
 void kbISRC(void) {

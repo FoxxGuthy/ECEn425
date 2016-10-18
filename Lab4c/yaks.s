@@ -6,9 +6,11 @@ YKExitMutex:
 	sti				; enable interrupts
 	ret
 
-YKDispatcher:
-	push	cs		; code segment (segment to which IP refers)
+YKsavecontext:
 	pushf	    	; push the flags
+	push	cs		; code segment (segment to which IP refers)
+	; PUSH THE INSTRUCTION POINTER
+	push word [bp+2]
 	labelDispatch:
 	push	ax
 	push	bx
@@ -25,7 +27,18 @@ YKDispatcher:
 
 	mov bx, [taskSaveCTX]		; save currentTask
 	mov	[bx], sp		; set sp and TCB of currentTask
-		
+	jmp YKrestorecontext
+
+YKDispatcher:
+	push 	bp					
+	mov 	bp, sp
+	push 	ax
+	mov 	ax, [bp+4]
+	cmp		ax, 1
+	pop 	ax
+	je 		YKsavecontext
+
+YKrestorecontext:
 	mov bx, [nextTask]		; save nextTask
 	mov sp, [bx]		; restore context of nextTask by getting sp from TB of nextTask
 
