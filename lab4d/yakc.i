@@ -183,8 +183,10 @@ void YKNewTask(void (* task)(void), void *taskStack, unsigned char priority){
  }
  TCBIdx++;
  dumpLists();
+
  if(YKKernalStarted == 1){
   YKScheduler(1);
+
  }
 }
 
@@ -241,8 +243,6 @@ void YKScheduler(char saveCTX){
   }
   YKDispatcher(saveCTX);
 
-
-
  }
 
 }
@@ -258,7 +258,7 @@ void YKDelayTask(unsigned newDelayCount) {
  currentTask->state = 0;
 
  YKScheduler(1);
-
+ YKExitMutex();
 
 }
 
@@ -273,6 +273,7 @@ void YKExitISR(void) {
  YKISRDepth--;
  if (YKISRDepth == 0) {
   YKScheduler(1);
+  YKExitMutex();
  }
 }
 

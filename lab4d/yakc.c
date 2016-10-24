@@ -138,8 +138,10 @@ void YKNewTask(void (* task)(void), void *taskStack, unsigned char priority){
 	}
 	TCBIdx++;
 	dumpLists();
+
 	if(YKKernalStarted == 1){
 		YKScheduler(1);
+		// TODO: Look into possibility of adding a YKExitMutex() here
 	}
 }
 
@@ -196,8 +198,6 @@ void YKScheduler(char saveCTX){
 		}
 		YKDispatcher(saveCTX); 
 		//YKExitMutex(); // Causes fatal crash on lab4d --> Need to look into
-
-		
 	}
 	
 }
@@ -213,7 +213,7 @@ void YKDelayTask(unsigned newDelayCount) {
 	currentTask->state = BLOCKED;
 	
 	YKScheduler(1);
-
+	YKExitMutex();
 	
 }
 
@@ -228,6 +228,7 @@ void YKExitISR(void) {
 	YKISRDepth--;
 	if (YKISRDepth == 0) {
 		YKScheduler(1);
+		YKExitMutex();
 	}
 }
 

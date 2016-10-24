@@ -1656,11 +1656,11 @@ L_yakc_18:
 	; >>>>> Line:	140
 	; >>>>> dumpLists(); 
 	call	dumpLists
-	; >>>>> Line:	141
+	; >>>>> Line:	142
 	; >>>>> if(YKKernalStarted == 1){ 
 	cmp	byte [YKKernalStarted], 1
 	jne	L_yakc_25
-	; >>>>> Line:	142
+	; >>>>> Line:	143
 	; >>>>> YKScheduler(1); 
 	mov	al, 1
 	push	ax
@@ -1685,34 +1685,34 @@ L_yakc_27:
 	DB	"TCBList: ",0
 	ALIGN	2
 dumpLists:
-	; >>>>> Line:	146
+	; >>>>> Line:	148
 	; >>>>> void dumpLists(){ 
 	jmp	L_yakc_31
 L_yakc_32:
-	; >>>>> Line:	148
+	; >>>>> Line:	150
 	; >>>>> traveser = taskhead; 
 	mov	ax, word [taskhead]
 	mov	word [bp-2], ax
-	; >>>>> Line:	149
+	; >>>>> Line:	151
 	; >>>>> printNewLine(); 
 	call	printNewLine
-	; >>>>> Line:	150
+	; >>>>> Line:	152
 	; >>>>> printString("TCBList: "); 
 	mov	ax, L_yakc_27
 	push	ax
 	call	printString
 	add	sp, 2
-	; >>>>> Line:	151
+	; >>>>> Line:	153
 	; >>>>> while(traveser){ 
 	jmp	L_yakc_34
 L_yakc_33:
-	; >>>>> Line:	152
+	; >>>>> Line:	154
 	; >>>>> printString("["); 
 	mov	ax, L_yakc_28
 	push	ax
 	call	printString
 	add	sp, 2
-	; >>>>> Line:	153
+	; >>>>> Line:	155
 	; >>>>> printInt(traveser->priority); 
 	mov	si, word [bp-2]
 	add	si, 3
@@ -1721,13 +1721,13 @@ L_yakc_33:
 	push	ax
 	call	printInt
 	add	sp, 2
-	; >>>>> Line:	154
-	; >>>>> ; 
+	; >>>>> Line:	156
+	; >>>>> } 
 	mov	ax, L_yakc_29
 	push	ax
 	call	printString
 	add	sp, 2
-	; >>>>> Line:	155
+	; >>>>> Line:	157
 	; >>>>> printInt(traveser->state); 
 	mov	si, word [bp-2]
 	add	si, 2
@@ -1736,26 +1736,26 @@ L_yakc_33:
 	push	ax
 	call	printInt
 	add	sp, 2
-	; >>>>> Line:	156
+	; >>>>> Line:	158
 	; >>>>> printString(","); 
 	mov	ax, L_yakc_29
 	push	ax
 	call	printString
 	add	sp, 2
-	; >>>>> Line:	157
+	; >>>>> Line:	159
 	; >>>>> printInt(traveser->delayCount); 
 	mov	si, word [bp-2]
 	add	si, 6
 	push	word [si]
 	call	printInt
 	add	sp, 2
-	; >>>>> Line:	158
+	; >>>>> Line:	160
 	; >>>>> printString("] "); 
 	mov	ax, L_yakc_30
 	push	ax
 	call	printString
 	add	sp, 2
-	; >>>>> Line:	160
+	; >>>>> Line:	162
 	; >>>>> traveser = traveser->nextTask; 
 	mov	si, word [bp-2]
 	add	si, 4
@@ -1766,7 +1766,7 @@ L_yakc_34:
 	test	ax, ax
 	jne	L_yakc_33
 L_yakc_35:
-	; >>>>> Line:	163
+	; >>>>> Line:	165
 	; >>>>> printNewLine(); 
 	call	printNewLine
 	mov	sp, bp
@@ -1781,20 +1781,20 @@ L_yakc_37:
 	DB	"IN YKRun",0
 	ALIGN	2
 YKRun:
-	; >>>>> Line:	166
+	; >>>>> Line:	168
 	; >>>>> void YKRun(void){ 
 	jmp	L_yakc_38
 L_yakc_39:
-	; >>>>> Line:	167
+	; >>>>> Line:	169
 	; >>>>> printDebug("IN YKRun"); 
 	mov	ax, L_yakc_37
 	push	ax
 	call	printDebug
 	add	sp, 2
-	; >>>>> Line:	169
+	; >>>>> Line:	171
 	; >>>>> YKKernalStarted = 1; 
 	mov	byte [YKKernalStarted], 1
-	; >>>>> Line:	171
+	; >>>>> Line:	173
 	; >>>>> YKScheduler(0); 
 	xor	al, al
 	push	ax
@@ -1813,42 +1813,42 @@ L_yakc_41:
 	DB	"IN YKScheduler",0
 	ALIGN	2
 YKScheduler:
-	; >>>>> Line:	174
+	; >>>>> Line:	176
 	; >>>>> void YKScheduler(char saveCTX){ 
 	jmp	L_yakc_43
 L_yakc_44:
-	; >>>>> Line:	177
+	; >>>>> Line:	179
 	; >>>>> traveser = taskhead; 
 	mov	ax, word [taskhead]
 	mov	word [bp-2], ax
-	; >>>>> Line:	178
+	; >>>>> Line:	180
 	; >>>>> YKEnterMutex(); 
 	call	YKEnterMutex
-	; >>>>> Line:	179
+	; >>>>> Line:	181
 	; >>>>> printDebug("IN YKScheduler"); 
 	mov	ax, L_yakc_41
 	push	ax
 	call	printDebug
 	add	sp, 2
-	; >>>>> Line:	180
+	; >>>>> Line:	182
 	; >>>>> while(traveser){ 
 	jmp	L_yakc_46
 L_yakc_45:
-	; >>>>> Line:	181
+	; >>>>> Line:	183
 	; >>>>> if(traveser->state == 1){ 
 	mov	si, word [bp-2]
 	add	si, 2
 	cmp	byte [si], 1
 	jne	L_yakc_48
-	; >>>>> Line:	182
+	; >>>>> Line:	184
 	; >>>>> nextTask = traveser; 
 	mov	ax, word [bp-2]
 	mov	word [nextTask], ax
-	; >>>>> Line:	183
+	; >>>>> Line:	185
 	; >>>>> break; 
 	jmp	L_yakc_47
 L_yakc_48:
-	; >>>>> Line:	185
+	; >>>>> Line:	187
 	; >>>>> traveser = traveser->nextTask; 
 	mov	si, word [bp-2]
 	add	si, 4
@@ -1859,32 +1859,32 @@ L_yakc_46:
 	test	ax, ax
 	jne	L_yakc_45
 L_yakc_47:
-	; >>>>> Line:	188
+	; >>>>> Line:	190
 	; >>>>> if(nextTask != currentTask){ 
 	mov	ax, word [currentTask]
 	cmp	ax, word [nextTask]
 	je	L_yakc_49
-	; >>>>> Line:	189
+	; >>>>> Line:	191
 	; >>>>> YKCtxSwCount++; 
 	inc	word [YKCtxSwCount]
-	; >>>>> Line:	190
+	; >>>>> Line:	192
 	; >>>>> taskSaveCTX = currentTask; 
 	mov	ax, word [currentTask]
 	mov	word [taskSaveCTX], ax
-	; >>>>> Line:	191
+	; >>>>> Line:	193
 	; >>>>> currentTask = nextTask; 
 	mov	ax, word [nextTask]
 	mov	word [currentTask], ax
-	; >>>>> Line:	192
+	; >>>>> Line:	194
 	; >>>>> if(0){ 
 	jmp	L_yakc_50
-	; >>>>> Line:	193
+	; >>>>> Line:	195
 	; >>>>> printString("Calling Dispatcher to dispatch task with priority "); 
 	mov	ax, L_yakc_42
 	push	ax
 	call	printString
 	add	sp, 2
-	; >>>>> Line:	194
+	; >>>>> Line:	196
 	; >>>>> printInt(nextTask->priority); 
 	mov	si, word [nextTask]
 	add	si, 3
@@ -1893,11 +1893,11 @@ L_yakc_47:
 	push	ax
 	call	printInt
 	add	sp, 2
-	; >>>>> Line:	195
+	; >>>>> Line:	197
 	; >>>>> printNewLine(); 
 	call	printNewLine
 L_yakc_50:
-	; >>>>> Line:	197
+	; >>>>> Line:	199
 	; >>>>> YKDispatcher(saveCTX); 
 	push	word [bp+4]
 	call	YKDispatcher
@@ -1946,6 +1946,9 @@ L_yakc_54:
 	push	ax
 	call	YKScheduler
 	add	sp, 2
+	; >>>>> Line:	216
+	; >>>>> YKExitMutex(); 
+	call	YKExitMutex
 L_yakc_55:
 	mov	sp, bp
 	pop	bp
@@ -1961,7 +1964,7 @@ YKEnterISR:
 	jmp	L_yakc_57
 L_yakc_58:
 	; >>>>> Line:	222
-	; >>>>> YKISRDepth++; 
+	; >>>>> = 1; 
 	inc	word [YKISRDepth]
 	mov	sp, bp
 	pop	bp
@@ -1973,7 +1976,7 @@ L_yakc_57:
 	ALIGN	2
 YKExitISR:
 	; >>>>> Line:	225
-	; >>>>> { 
+	; >>>>> void YKExitISR(void) { 
 	jmp	L_yakc_60
 L_yakc_61:
 	; >>>>> Line:	228
@@ -1990,6 +1993,9 @@ L_yakc_61:
 	push	ax
 	call	YKScheduler
 	add	sp, 2
+	; >>>>> Line:	231
+	; >>>>> YKExitMutex(); 
+	call	YKExitMutex
 L_yakc_62:
 	mov	sp, bp
 	pop	bp
@@ -2006,56 +2012,56 @@ L_yakc_64:
 	DB	"IN YKTickHandler",0
 	ALIGN	2
 YKTickHandler:
-	; >>>>> Line:	234
+	; >>>>> Line:	235
 	; >>>>> void YKTickHandler(void) { 
 	jmp	L_yakc_67
 L_yakc_68:
-	; >>>>> Line:	240
+	; >>>>> Line:	241
 	; >>>>> traveser = taskhead; 
 	mov	ax, word [taskhead]
 	mov	word [bp-2], ax
-	; >>>>> Line:	242
+	; >>>>> Line:	243
 	; >>>>> YKTickNum++; 
 	inc	word [YKTickNum]
-	; >>>>> Line:	243
+	; >>>>> Line:	244
 	; >>>>> printDebug("IN YKTickHandler"); 
 	mov	ax, L_yakc_64
 	push	ax
 	call	printDebug
 	add	sp, 2
-	; >>>>> Line:	244
+	; >>>>> Line:	245
 	; >>>>> while(traveser){ 
 	jmp	L_yakc_70
 L_yakc_69:
-	; >>>>> Line:	245
+	; >>>>> Line:	246
 	; >>>>> if(traveser->state == 0){ 
 	mov	si, word [bp-2]
 	add	si, 2
 	mov	al, byte [si]
 	test	al, al
 	jne	L_yakc_72
-	; >>>>> Line:	246
+	; >>>>> Line:	247
 	; >>>>> traveser->delayCount--; 
 	mov	si, word [bp-2]
 	add	si, 6
 	dec	word [si]
-	; >>>>> Line:	248
+	; >>>>> Line:	249
 	; >>>>> if(traveser->delayCount == 0){ 
 	mov	si, word [bp-2]
 	add	si, 6
 	mov	ax, word [si]
 	test	ax, ax
 	jne	L_yakc_73
-	; >>>>> Line:	250
+	; >>>>> Line:	251
 	; >>>>> if(0 == 1){ 
 	jmp	L_yakc_74
-	; >>>>> Line:	251
+	; >>>>> Line:	252
 	; >>>>> printString("task now READY with priority "); 
 	mov	ax, L_yakc_65
 	push	ax
 	call	printString
 	add	sp, 2
-	; >>>>> Line:	252
+	; >>>>> Line:	253
 	; >>>>> printInt(traveser->priority); 
 	mov	si, word [bp-2]
 	add	si, 3
@@ -2064,29 +2070,29 @@ L_yakc_69:
 	push	ax
 	call	printInt
 	add	sp, 2
-	; >>>>> Line:	253
+	; >>>>> Line:	254
 	; >>>>> printNewLine(); 
 	call	printNewLine
 L_yakc_74:
-	; >>>>> Line:	256
+	; >>>>> Line:	257
 	; >>>>> traveser->state = 1; 
 	mov	si, word [bp-2]
 	add	si, 2
 	mov	byte [si], 1
 L_yakc_73:
-	; >>>>> Line:	259
-	; >>>>> if(traveser->delayCount < 0){ 
+	; >>>>> Line:	260
+	; >>>>>  
 	mov	si, word [bp-2]
 	add	si, 6
 	cmp	word [si], 0
 	jge	L_yakc_75
-	; >>>>> Line:	260
-	; >>>>>  
+	; >>>>> Line:	261
+	; >>>>> printString("SOMETHING HAS GONE HORRIBLY WRONG -- TASK HAS DELAY COUNT < 0. Priority: "); 
 	mov	ax, L_yakc_66
 	push	ax
 	call	printString
 	add	sp, 2
-	; >>>>> Line:	261
+	; >>>>> Line:	262
 	; >>>>> printInt(traveser->priority); 
 	mov	si, word [bp-2]
 	add	si, 3
@@ -2095,12 +2101,12 @@ L_yakc_73:
 	push	ax
 	call	printInt
 	add	sp, 2
-	; >>>>> Line:	262
+	; >>>>> Line:	263
 	; >>>>> printNewLine(); 
 	call	printNewLine
 L_yakc_75:
 L_yakc_72:
-	; >>>>> Line:	266
+	; >>>>> Line:	267
 	; >>>>> traveser = traveser->nextTask; 
 	mov	si, word [bp-2]
 	add	si, 4
