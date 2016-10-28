@@ -17,6 +17,7 @@ void tickISRC(void) {
 
 void kbISRC(void) {
 	
+	// 'd' is 100
 	if(KeyBuffer == 100){
 		int i = 0;
 		printNewLine();
@@ -28,7 +29,12 @@ void kbISRC(void) {
 		printNewLine();
 		printString("DELAY COMPLETE");
 		printNewLine();
-	} else {
+	}
+	// 'p' is 112
+	else if(KeyBuffer == 112) {
+		YKSemPost(NSemPtr);
+	}
+	else {
 		printNewLine();
 		printString("KEYPRESS (");
 		printChar(KeyBuffer);
