@@ -8,24 +8,28 @@ Problems: 	(Know how to fix, need to do) -- YKNewTask doesn't actually insert in
 #include "yakk.h"
 #include "clib.h"
 
-#define BLOCKED 0
+#define DELAYED 0
 #define READY 1
 #define RUNNING 2
-#define INTERRUPTED 3
+#define BLOCKED 3
 
 #define DEBUG_MODE 0
 
 // Task-Control-Block that holds the information for each running task
 struct TCB {
     unsigned *sp;        // stack pointer
-    unsigned char state; // 0 = ready, 1 = blocked, 2 = ??, 3 = ??
+    unsigned char state; // 0 = ready, 1 = DELAYED, 2 = ??, 3 = ??
     unsigned char priority;// = 0;
     struct TCB *nextTask;
+	YKSEM *blocker;		// semaphore that is blocking this task. NULL if no sem is blocking.
     int delayCount;// = 0;
 };
 
+
 // Allocation of memory for the tasks
 struct TCB TCBArray[MAXTASKS];
+// Allocation of memory for the semaphores
+YKSEM SEMArray[MAXTASKS];
 
 int YKISRDepth = 0; // variable changed by EnterISR & ExitISR. represents ISR call depth
 
@@ -39,6 +43,7 @@ struct TCB *nextTask;
 char YKKernalStarted = 0;
 
 int TCBIdx = 0; // variable used to indicate the next ready TCB object in array
+int SEMIdx = 0; // variable used to indicate the next ready SEM object in array
 
 void YKIdleTask(void);               /* Function prototypes for task code */
 void dumpLists(void);
@@ -75,6 +80,7 @@ void YKIdleTask(void){
 void YKNewTask(void (* task)(void), void *taskStack, unsigned char priority){
 	//int i = 3;
 	unsigned *newSP;
+	YKEnterMutex();
 	TCBArray[TCBIdx].state = READY;
 	TCBArray[TCBIdx].priority = priority;
 	//TCBArray[TCBIdx].sp = taskStack;
@@ -137,7 +143,9 @@ void YKNewTask(void (* task)(void), void *taskStack, unsigned char priority){
 
 	}
 	TCBIdx++;
-	dumpLists();
+	if(DEBUG_MODE){
+		dumpLists();
+	}
 
 	if(YKKernalStarted == 1){
 		YKScheduler(1);
@@ -165,6 +173,17 @@ void dumpLists(){
 	printNewLine();
 }
 
+void dumpSems(){
+	int i = 0;
+	printString("Sem Values: ");
+	for(i=0; i<SEMIdx; i++){
+		printInt(SEMArray[i]);
+		printString(" | ");
+
+	}
+	printNewLine();
+}
+
 void YKRun(void){
 	printDebug("IN YKRun");
     /* Set global flag to indicate kernel started */
@@ -179,6 +198,11 @@ void YKScheduler(char saveCTX){
 	traveser = taskhead;
 	YKEnterMutex();
 	printDebug("IN YKScheduler");
+	if(DEBUG_MODE){
+		printString("SaveContext: ");
+		printInt(saveCTX);
+		printNewLine();
+	}
 	while(traveser){
 		if(traveser->state == READY){
 			nextTask = traveser;
@@ -210,7 +234,7 @@ void YKDelayTask(unsigned newDelayCount) {
 		return ;
 	}
 	currentTask->delayCount = newDelayCount;
-	currentTask->state = BLOCKED;
+	currentTask->state = DELAYED;
 	
 	YKScheduler(1);
 	YKExitMutex();
@@ -243,7 +267,7 @@ void YKTickHandler(void) {
 	YKTickNum++;
 	printDebug("IN YKTickHandler");
 	while(traveser){
-		if(traveser->state == BLOCKED){
+		if(traveser->state == DELAYED){
 			traveser->delayCount--;
 	
 			if(traveser->delayCount == 0){
@@ -266,6 +290,66 @@ void YKTickHandler(void) {
 		}
 		traveser = traveser->nextTask;
 	}
+}
+
+YKSEM* YKSemCreate(int initialValue){
+
+	YKSEM *temp;
+	if(initialValue < 0){
+
+		if(DEBUG_MODE == 1){
+			printString("PROBLEM: Semaphore initialized with negative value!");
+			printNewLine();
+		}
+		return NULL;
+	}
+	
+	temp = &SEMArray[SEMIdx];
+	*temp = initialValue;
+	SEMIdx++;
+	return temp;
+
+}
+
+void YKSemPend(YKSEM *semaphore){
+	YKEnterMutex();
+	if(*semaphore == 0){
+		currentTask->state = BLOCKED;
+		currentTask->blocker = semaphore;
+		YKScheduler(1);
+	}
+	(*semaphore)--;
+	YKExitMutex();
+
+}
+
+void YKSemPost(YKSEM *semaphore){
+
+
+	struct TCB *traveser;
+
+	YKEnterMutex();	
+	(*semaphore)++;
+	traveser = taskhead;
+
+	while(traveser){
+		if(traveser->state == BLOCKED){
+
+			// if the task is blocked because of the semaphore we just posted
+			if(traveser->blocker == semaphore){
+				traveser->state = READY;
+				traveser->blocker = NULL;
+				break;
+			}
+		}
+		traveser = traveser->nextTask;
+	}
+
+	if (YKISRDepth == 0) { // we are not in an isr
+		YKScheduler(1);
+	}
+	YKExitMutex();
+
 }
 
 

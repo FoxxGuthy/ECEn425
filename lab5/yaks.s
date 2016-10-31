@@ -34,8 +34,8 @@ YKDispatcher:
 	push 	bp					
 	mov 	bp, sp
 	push 	ax
-	mov 	ax, [bp+4]
-	cmp		ax, 1
+	mov 	ax, word [bp+4]
+	cmp		al, 1 ;Not sure why it cannot move the whole register over... simple fix for now
 	pop 	ax
 	je 		YKsavecontext
 

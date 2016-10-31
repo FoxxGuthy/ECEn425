@@ -1,4 +1,5 @@
 #include "clib.h"
+#include "yakk.h"
 extern int KeyBuffer;
 
 void resetISRC(void) {
