@@ -6,7 +6,9 @@
 typedef int YKSEM;
 
 // struct for message queues. TODO: MAKE THIS QUEUE. DEFINE in yakc.c?
-typedef struct YKQ;
+typedef struct YKQ {
+
+};
 
 void YKInitialize(void);
 

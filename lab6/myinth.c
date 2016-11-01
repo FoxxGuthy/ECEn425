@@ -6,7 +6,7 @@
 // extern int KeyBuffer;  // Needed by old kbISRC, which printed the keypress.
 extern YKQ *MsgQPtr;
 extern struct msg MsgArray[];
-extern int GlobalFlag; // TODO: where to define this?
+extern int GlobalFlag;
 extern int YKTickNum;  // defined in yakc.c
 
 void resetISRC(void) {
