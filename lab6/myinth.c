@@ -27,6 +27,8 @@ void tickISRC(void) {
 	else if (++next >= MSGARRAYSIZE)
 			next = 0;
 
+	YKTickHandler();
+
 	/*The OLD tickISRC*/
 	// static int tickCount = 0;
 	// tickCount++;
@@ -35,6 +37,7 @@ void tickISRC(void) {
 	// printInt(tickCount);
 	// printNewLine();
 	// YKTickHandler();
+
 }
 
 void kbISRC(void) {

@@ -1,11 +1,18 @@
 #include "yakk.h"
 #include "clib.h"
+#include "yaku.h"
 
 // THE "STATES" OF TASKS
 #define DELAYED 0
 #define READY 1
 #define RUNNING 2
 #define BLOCKED 3
+#define QBLOCKED 4
+
+#define QEMPTY 0
+#define QFULL 1
+#define QNEITHER 2
+
 
 #define DEBUG_MODE 0
 
@@ -16,6 +23,7 @@ struct TCB {
     unsigned char priority;// = 0;
     struct TCB *nextTask;
 	  YKSEM *blocker;		// semaphore that is blocking this task. NULL if no sem is blocking.
+    YKQ   *qblocker;  // queue that is blocking this task. NULL if no queue is blocking
     int delayCount;// = 0;
 };
 
@@ -26,12 +34,14 @@ struct TCB *nextTask;
 
 int TCBIdx = 0; // variable used to indicate the next ready TCB object in array
 int SEMIdx = 0; // variable used to indicate the next ready SEM object in array
+int YKQIdx = 0; // variable used to indicate the next ready YKQ object in array
 
 // Allocation of memory for the tasks
 struct TCB TCBArray[MAXTASKS];
 // Allocation of memory for the semaphores
-YKSEM SEMArray[MAXTASKS];
-
+YKSEM SEMArray[MAXSEMS];
+//Allocation of memory for the queues
+YKQ YKQArray[MAXQ];
 
 // MISC. GLOBAL VARIABLES ------------------------------------------------------------
 
@@ -356,13 +366,84 @@ void YKSemPost(YKSEM *semaphore){
 }
 
 YKQ *YKQCreate(void **start, unsigned size) {
-  return NULL;
+  YKQArray[YKQIdx].length = size;
+	YKQArray[YKQIdx].queueAddress = start;
+	YKQArray[YKQIdx].nextEmpty = start;
+  YKQArray[YKQIdx].nextRemove = start;
+  YKQArray[YKQIdx].state = QEMPTY;
+
+  YKQIdx++;
+
+  return &YKQArray[YKQIdx-1];
+
 }
 
 void *YKQPend(YKQ *queue) {
+  void *tempmsg;
 
+  YKEnterMutex();
+	if(queue->state == QEMPTY){
+		currentTask->state = QBLOCKED;
+		currentTask->qblocker = queue;
+		YKScheduler(1);
+	}
+  tempmsg = (void *) queue->nextRemove;
+
+  queue->nextRemove++;
+  if(queue->nextRemove == queue->queueAddress + queue->length){
+    queue->nextRemove = queue->queueAddress;
+
+  }
+
+  if(queue->state == QFULL){
+    queue->state = QNEITHER;
+  }else if(queue->nextRemove == queue->nextEmpty){
+    queue->state = QEMPTY;
+  }
+
+	YKExitMutex();
+  return tempmsg;
 }
 
 int YKQPost(YKQ *queue, void *msg) {
-  return 0;
+  struct TCB *traveser;
+  YKEnterMutex();
+
+	if(queue->state == QFULL){
+    return 0;
+	}
+  *queue->nextEmpty = msg;
+  queue->nextEmpty++;
+  if(queue->nextEmpty == queue->queueAddress + queue->length){
+    queue->nextEmpty = queue->queueAddress;
+  }
+
+  if(queue->state == QEMPTY){
+    queue->state = QNEITHER;
+  }else if(queue->nextRemove == queue->nextEmpty){
+    queue->state = QFULL;
+  }
+
+  traveser = taskhead;
+
+	while(traveser){
+		if(traveser->state == QBLOCKED){
+
+			// if the task is blocked because of the semaphore we just posted
+			if(traveser->qblocker == queue){
+				traveser->state = READY;
+				traveser->qblocker = NULL;
+				break;
+			}
+		}
+		traveser = traveser->nextTask;
+	}
+
+	if (YKISRDepth == 0) { // we are not in an isr
+		YKScheduler(1);
+	}
+
+	YKExitMutex();
+
+  return 1;
 }

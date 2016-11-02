@@ -6,9 +6,14 @@
 typedef int YKSEM;
 
 // struct for message queues. TODO: MAKE THIS QUEUE. DEFINE in yakc.c?
-typedef struct YKQ {
+typedef struct {
+  void **queueAddress;
+  unsigned length;
+  void **nextEmpty;
+  void **nextRemove;
+  unsigned state;
 
-};
+} YKQ;
 
 void YKInitialize(void);
 
@@ -29,6 +34,8 @@ void YKDispatcher(char saveCTX); // this is an assembly function. declare here
 extern int YKCtxSwCount;
 
 extern int YKIdleCount;
+
+extern int YKTickNum;
 
 extern YKSEM *NSemPtr;
 
