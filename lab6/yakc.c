@@ -378,6 +378,14 @@ YKQ *YKQCreate(void **start, unsigned size) {
 
 }
 
+void debugQueue(YKQ *queue){
+  printString("YKQ STRUCT: ");
+  printWord((int) queue->nextEmpty);
+  printString(", ");
+  printWord((int) queue->nextRemove);
+  printNewLine();
+}
+
 void *YKQPend(YKQ *queue) {
   void *tempmsg;
 
@@ -387,7 +395,7 @@ void *YKQPend(YKQ *queue) {
 		currentTask->qblocker = queue;
 		YKScheduler(1);
 	}
-  tempmsg = (void *) queue->nextRemove;
+  tempmsg = (void *) *queue->nextRemove;
 
   queue->nextRemove++;
   if(queue->nextRemove == queue->queueAddress + queue->length){
@@ -400,7 +408,7 @@ void *YKQPend(YKQ *queue) {
   }else if(queue->nextRemove == queue->nextEmpty){
     queue->state = QEMPTY;
   }
-
+  if(DEBUG_MODE)  debugQueue(queue);
 	YKExitMutex();
   return tempmsg;
 }
@@ -423,6 +431,7 @@ int YKQPost(YKQ *queue, void *msg) {
   }else if(queue->nextRemove == queue->nextEmpty){
     queue->state = QFULL;
   }
+  if(DEBUG_MODE)  debugQueue(queue);
 
   traveser = taskhead;
 
