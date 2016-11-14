@@ -8,6 +8,7 @@
 #define RUNNING 2
 #define BLOCKED 3
 #define QBLOCKED 4
+#define EBLOCKED 5
 
 #define QEMPTY 0
 #define QFULL 1
@@ -24,6 +25,9 @@ struct TCB {
     struct TCB *nextTask;
 	  YKSEM *blocker;		// semaphore that is blocking this task. NULL if no sem is blocking.
     YKQ   *qblocker;  // queue that is blocking this task. NULL if no queue is blocking
+    YKEVENT   *eblocker;  // event that is blocking this task. NULL if no queue is blocking
+    unsigned eventMask;   // mask that this task is waiting for to become unblocked
+    int waitMode;         // mode of the task that it is waiting for
     int delayCount;// = 0;
 };
 
@@ -35,6 +39,7 @@ struct TCB *nextTask;
 int TCBIdx = 0; // variable used to indicate the next ready TCB object in array
 int SEMIdx = 0; // variable used to indicate the next ready SEM object in array
 int YKQIdx = 0; // variable used to indicate the next ready YKQ object in array
+int YKEIdx = 0; // variable used to indicate the next ready YKE object in array
 
 // Allocation of memory for the tasks
 struct TCB TCBArray[MAXTASKS];
@@ -42,6 +47,8 @@ struct TCB TCBArray[MAXTASKS];
 YKSEM SEMArray[MAXSEMS];
 //Allocation of memory for the queues
 YKQ YKQArray[MAXQ];
+//Allocation of memory for the queues
+YKEVENT YKEArray[MAXE];
 
 // MISC. GLOBAL VARIABLES ------------------------------------------------------------
 
@@ -463,17 +470,86 @@ int YKQPost(YKQ *queue, void *msg) {
 // --- EVENTS --
 
 YKEVENT *YKEventCreate(unsigned initialValue) {
+  YKEArray[YKEIdx].value = initialValue;
 
+  YKEIdx++;
+
+  return &YKEArray[YKEIdx-1];
 }
 
 unsigned YKEventPend(YKEVENT *event, unsigned eventMask, int waitMode) {
 
+  YKEnterMutex();
+  if(waitMode == EVENT_WAIT_ALL){
+      if(eventMask == event->value){
+          return event->value;
+      }else{
+        currentTask->state = EBLOCKED;
+        currentTask->eblocker = event;
+        currentTask->eventMask = eventMask;
+        currentTask->waitMode = waitMode;
+        YKScheduler(1);
+      }
+  }else{
+      //bitwise and the mask and the value. If any of the bits match, the result
+      //will be non zero and the if statement true.
+      if(eventMask & event->value){
+          return event->value;
+      }else{
+        currentTask->state = EBLOCKED;
+        currentTask->eblocker = event;
+        currentTask->eventMask = eventMask;
+        currentTask->waitMode = waitMode;
+        YKScheduler(1);
+      }
+  }
+
+	YKExitMutex();
+  return event->value;
 }
 
 void YKEventSet(YKEVENT *event, unsigned eventMask) {
 
+  struct TCB *traveser;
+  event->value = eventMask;
+
+  YKEnterMutex();
+
+  traveser = taskhead;
+
+	while(traveser){
+		if(traveser->state == EBLOCKED){
+
+			// if the task is blocked because of the event we just set
+			if(traveser->eblocker == event){
+        if(traveser->waitMode == EVENT_WAIT_ALL){
+            if(traveser->eventMask == event->value){
+              traveser->state = READY;
+              traveser->eblocker = NULL;
+              traveser->eventMask = NULL;
+              traveser->waitMode = NULL;
+            }
+          }else{
+            //bitwise and the mask and the value. If any of the bits match, the result
+            //will be non zero and the if statement true.
+            if(traveser->eventMask & event->value){
+              traveser->state = READY;
+              traveser->eblocker = NULL;
+              traveser->eventMask = NULL;
+              traveser->waitMode = NULL;
+            }
+          }
+        }
+			}
+		traveser = traveser->nextTask;
+	}
+
+	if (YKISRDepth == 0) { // we are not in an isr
+		YKScheduler(1);
+	}
+  YKExitMutex();
 }
 
 void YKEventReset(YKEVENT *event, unsigned eventMask) {
-  
+  event->value = eventMask;
 }

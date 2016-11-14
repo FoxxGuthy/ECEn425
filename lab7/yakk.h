@@ -2,6 +2,11 @@
 // and extern declarations of some global variables.
 #include "yaku.h"
 
+#define EVENT_WAIT_ANY 0
+
+#define EVENT_WAIT_ALL 1
+
+
 // Struct that holds the semaphore value
 typedef int YKSEM;
 
@@ -16,7 +21,7 @@ typedef struct {
 } YKQ;
 
 typedef struct {
-  // TODO: fill this in
+  unsigned value;
 } YKEVENT;
 
 void YKInitialize(void);
