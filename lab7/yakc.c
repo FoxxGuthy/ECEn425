@@ -511,7 +511,7 @@ unsigned YKEventPend(YKEVENT *event, unsigned eventMask, int waitMode) {
 void YKEventSet(YKEVENT *event, unsigned eventMask) {
 
   struct TCB *traveser;
-  event->value = eventMask;
+  event->value = event->value | eventMask;
 
   YKEnterMutex();
 
@@ -551,5 +551,5 @@ void YKEventSet(YKEVENT *event, unsigned eventMask) {
 }
 
 void YKEventReset(YKEVENT *event, unsigned eventMask) {
-  event->value = eventMask;
+  event->value = event->value & (~eventMask);
 }
