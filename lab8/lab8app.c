@@ -75,7 +75,39 @@ void NewPieceTask(void)
 
 void StatsTask(void)
 {
+    unsigned max, switchCount, idleCount;
+    int tmp;
 
+    YKDelayTask(1);
+    printString("Welcome to the YAK kernel\r\n");
+    printString("Determining CPU capacity\r\n");
+    YKDelayTask(1);
+    YKIdleCount = 0;
+    YKDelayTask(5);
+    max = YKIdleCount / 25;
+    YKIdleCount = 0;
+
+    while (1)
+    {
+        YKDelayTask(20);
+
+        YKEnterMutex();
+        switchCount = YKCtxSwCount;
+        idleCount = YKIdleCount;
+        YKExitMutex();
+
+        printString("<<<<< Context switches: ");
+        printInt((int)switchCount);
+        printString(", CPU usage: ");
+        tmp = (int) (idleCount/max);
+        printInt(100-tmp);
+        printString("% >>>>>\r\n");
+
+        YKEnterMutex();
+        YKCtxSwCount = 0;
+        YKIdleCount = 0;
+        YKExitMutex();
+    }
 }
 
 void main(void)
