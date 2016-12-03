@@ -1,14 +1,120 @@
 gameOverISR:
-  iret
+    push 	bp
+    mov 	bp, sp
+    call gameOverISRC
 
 newPeiceISR:
-  iret
+    push	ax
+    push	bx
+    push	cx
+    push	dx
+    push	si
+    push	di
+    push	bp
+    push	es
+    push	ds
+
+    call 	YKEnterISR		;call before enabling interrupts again
+    sti
+    call	newPeiceISRC
+    cli
+    call	signalEOI
+    call 	YKExitISR
+
+    pop		ds
+    pop		es
+    pop		bp
+    pop		di
+    pop		si
+    pop		dx
+    pop		cx
+    pop		bx
+    pop		ax
+    iret
 
 receivedCommandISR:
-  iret
+    push	ax
+    push	bx
+    push	cx
+    push	dx
+    push	si
+    push	di
+    push	bp
+    push	es
+    push	ds
+
+    call 	YKEnterISR		;call before enabling interrupts again
+    sti
+    call	receivedCommandISRC
+    cli
+    call	signalEOI
+    call 	YKExitISR
+
+    pop		ds
+    pop		es
+    pop		bp
+    pop		di
+    pop		si
+    pop		dx
+    pop		cx
+    pop		bx
+    pop		ax
+    iret
 
 touchdownISR:
-  iret
-  
+    push	ax
+    push	bx
+    push	cx
+    push	dx
+    push	si
+    push	di
+    push	bp
+    push	es
+    push	ds
+
+    call 	YKEnterISR		;call before enabling interrupts again
+    sti
+    call	touchdownISRC
+    cli
+    call	signalEOI
+    call 	YKExitISR
+
+    pop		ds
+    pop		es
+    pop		bp
+    pop		di
+    pop		si
+    pop		dx
+    pop		cx
+    pop		bx
+    pop		ax
+    iret
+
 lineclearISR:
-  iret
+    push	ax
+    push	bx
+    push	cx
+    push	dx
+    push	si
+    push	di
+    push	bp
+    push	es
+    push	ds
+
+    call 	YKEnterISR		;call before enabling interrupts again
+    sti
+    call	lineclearISRC
+    cli
+    call	signalEOI
+    call 	YKExitISR
+
+    pop		ds
+    pop		es
+    pop		bp
+    pop		di
+    pop		si
+    pop		dx
+    pop		cx
+    pop		bx
+    pop		ax
+    iret
