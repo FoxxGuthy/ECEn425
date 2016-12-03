@@ -3,7 +3,7 @@ gameOverISR:
     mov 	bp, sp
     call gameOverISRC
 
-newPeiceISR:
+newPieceISR:
     push	ax
     push	bx
     push	cx
@@ -16,7 +16,7 @@ newPeiceISR:
 
     call 	YKEnterISR		;call before enabling interrupts again
     sti
-    call	newPeiceISRC
+    call	newPieceISRC
     cli
     call	signalEOI
     call 	YKExitISR

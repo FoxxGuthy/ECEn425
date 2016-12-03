@@ -1,10 +1,18 @@
 ///////////////////////////////////
 // SIMPTRIS INTERRUPTS
+
+#include "clib.h"
+#include "yakk.h"
+// #include "lab7defs.h"
+// #include "yakc.c"
+
+extern YKSEM *NPSemPtr;
+extern YKSEM *RCSemPtr;
  void gameOverISRC(void) {
     exit(0);
  }
 
- void newPeiceISRC(void) {
+ void newPieceISRC(void) {
     YKSemPost(NPSemPtr);
  }
 
