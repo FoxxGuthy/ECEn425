@@ -3,15 +3,55 @@
 	ALIGN	2
 	jmp	main	; Jump to program start
 	ALIGN	2
-L_myinth_1:
-	DW	0
+resetISRC:
+	; >>>>> Line:	9
+	; >>>>> void resetISRC(void) { 
+	jmp	L_myinth_1
 L_myinth_2:
-	DW	0
-YKQ:
-	TIMES	2 db 0
-queue:
-	TIMES	2 db 0
-msg:
-	TIMES	2 db 0
-MsgQPtr:
-	TIMES	2 db 0
+	; >>>>> Line:	10
+	; >>>>> exit(0); 
+	xor	al, al
+	push	ax
+	call	exit
+	add	sp, 2
+	mov	sp, bp
+	pop	bp
+	ret
+L_myinth_1:
+	push	bp
+	mov	bp, sp
+	jmp	L_myinth_2
+	ALIGN	2
+tickISRC:
+	; >>>>> Line:	13
+	; >>>>> void tickISRC(void) { 
+	jmp	L_myinth_4
+L_myinth_5:
+	; >>>>> Line:	14
+	; >>>>> YKTickHandler(); 
+	call	YKTickHandler
+	mov	sp, bp
+	pop	bp
+	ret
+L_myinth_4:
+	push	bp
+	mov	bp, sp
+	jmp	L_myinth_5
+	ALIGN	2
+kbISRC:
+	; >>>>> Line:	17
+	; >>>>> void kbISRC(void) { 
+	jmp	L_myinth_7
+L_myinth_8:
+	; >>>>> Line:	19
+	; >>>>> c = KeyBuffer; 
+	mov	al, byte [KeyBuffer]
+	mov	byte [bp-1], al
+	mov	sp, bp
+	pop	bp
+	ret
+L_myinth_7:
+	push	bp
+	mov	bp, sp
+	push	cx
+	jmp	L_myinth_8
