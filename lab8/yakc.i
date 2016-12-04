@@ -323,6 +323,7 @@ void YKScheduler(char saveCTX){
   taskSaveCTX = currentTask;
   currentTask = nextTask;
   if(0){
+      dumpLists();
    printString("Calling Dispatcher to dispatch task with priority ");
    printInt(nextTask->priority);
    printNewLine();

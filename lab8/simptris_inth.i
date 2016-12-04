@@ -129,6 +129,7 @@ extern YKSEM *RCSemPtr;
  }
 
  void newPieceISRC(void) {
+    printString("NP ISRC \r\n");
     YKSemPost(NPSemPtr);
  }
 

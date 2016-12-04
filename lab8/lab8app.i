@@ -140,8 +140,10 @@ void RotatePiece(int ID, int direction);
 void SeedSimptris(long seed);
 void StartSimptris(void);
 # 11 "lab8app.c" 2
-# 21 "lab8app.c"
+# 25 "lab8app.c"
 struct msg MsgArray[20];
+int nextMsg = 0;
+
 
 int SimpCommTaskStk[512];
 int NewPieceTaskStk[512];
@@ -156,15 +158,97 @@ YKSEM *NPSemPtr;
 
 extern unsigned NewPieceType;
 extern unsigned NewPieceOrientation;
+extern unsigned NewPieceColumn;
+extern unsigned NewPieceID;
+extern unsigned ScreenBitMap0;
+extern unsigned ScreenBitMap1;
+extern unsigned ScreenBitMap2;
+extern unsigned ScreenBitMap3;
+extern unsigned ScreenBitMap4;
+extern unsigned ScreenBitMap5;
+
+void addToQueue(int pieceID, int cmd, int direction){
+
+  MsgArray[nextMsg].pieceID = pieceID;
+  MsgArray[nextMsg].cmd = cmd;
+  MsgArray[nextMsg].direction = direction;
+  printString("ATQ: CMD:");
+  printInt(cmd);
+  printString(" DIR:");
+  printInt(direction);
+  printNewLine();
+
+  if (YKQPost(MsgQPtr, (void *) &(MsgArray[nextMsg])) == 0)
+   printString("  addToQ: queue overflow! \n");
+ else if (++nextMsg >= 20)
+   nextMsg = 0;
+
+}
+
+void setOrientation(int Orientation){
+  int dif = NewPieceOrientation - Orientation;
+
+  switch(dif) {
+    case -3:
+      addToQueue(NewPieceID, 1, 1);
+      break;
+    case -2:
+      addToQueue(NewPieceID, 1, 0);
+      addToQueue(NewPieceID, 1, 0);
+      break;
+    case -1:
+      addToQueue(NewPieceID, 1, 0);
+      break;
+    case 0:
+      break;
+    case 1:
+      addToQueue(NewPieceID, 1, 1);
+      break;
+    case 2:
+      addToQueue(NewPieceID, 1, 1);
+      addToQueue(NewPieceID, 1, 1);
+      break;
+    case 3:
+      addToQueue(NewPieceID, 1, 0);
+      break;
+    default:
+      break;
+
+  }
+  return ;
+}
+
+void setColumn(int Column){
+  int i = 0;
+  int dif;
+  if(NewPieceColumn > Column){
+    dif = NewPieceColumn - Column;
+    for(i=0;i<dif;i++){
+      addToQueue(NewPieceID, 0, 0);
+    }
+  }else if(NewPieceColumn < Column){
+      dif = Column - NewPieceColumn;
+      for(i=0;i<dif;i++){
+        addToQueue(NewPieceID, 0, 1);
+      }
+  }
+
+
+  return ;
+}
 
 void SimpCommTask(void)
 {
 struct msg *tmp;
-
 while (1)
   {
   YKSemPend(RCSemPtr);
   tmp = (struct msg *) YKQPend(MsgQPtr);
+  printString("C: ");
+  printInt(tmp->cmd);
+  printString(" D: ");
+  printInt(tmp->direction);
+  printNewLine();
     if(tmp->cmd == 0){
       SlidePiece(tmp->pieceID, tmp->direction);
     }else{
@@ -173,11 +257,101 @@ while (1)
   }
 }
 
+int getFirstOne(int column){
+  int i;
+  int tmp = 1;
+
+  for(i=15;i>=0;i--){
+    if((tmp & column)==tmp){
+      return i+1;
+    }else{
+      tmp = tmp<<1;
+    }
+  }
+  return i+1;
+}
+
 void NewPieceTask(void)
 {
-  while(1){
-  YKSemPend(NPSemPtr);
+  int col0Level;
+  int col1Level;
+  int col2Level;
+  int col3Level;
+  int col4Level;
+  int col5Level;
+  char bin0 = 0;
+  char bin1 = 0;
 
+  while(1){
+    YKSemPend(NPSemPtr);
+    printString("NP NPTSK \r\n");
+    col0Level = getFirstOne(ScreenBitMap0);
+    col1Level = getFirstOne(ScreenBitMap1);
+    col2Level = getFirstOne(ScreenBitMap2);
+    col3Level = getFirstOne(ScreenBitMap3);
+    col4Level = getFirstOne(ScreenBitMap4);
+    col5Level = getFirstOne(ScreenBitMap5);
+    printInt(col0Level);
+    printInt(col1Level);
+    printInt(col2Level);
+    printInt(col3Level);
+    printInt(col4Level);
+    printInt(col5Level);
+    printNewLine();
+    if((col0Level == col1Level) && (col1Level==col2Level)){
+      bin0 = 0;
+    }else{
+      bin0 = 1;
+    }
+    if((col3Level == col4Level) && (col4Level==col5Level)){
+      bin1 = 0;
+    }else{
+      bin1 = 1;
+    }
+    printString("B0:");
+    printInt(bin0);
+    printString(" B1:");
+    printInt(bin1);
+    printNewLine();
+
+
+    if(NewPieceColumn==0){
+      setColumn(1);
+    }else if(NewPieceColumn==5){
+      setColumn(4);
+    }
+
+    if(NewPieceType==1){
+
+      if(NewPieceOrientation==1){
+        addToQueue(NewPieceID, 1, 1);
+      }
+      if(bin0==0){
+        setColumn(1);
+      }
+      if(bin1==0){
+        setColumn(4);
+      }
+
+
+    }else{
+      if((bin0==0) && (bin1==0)){
+        if(col0Level < col5Level){
+          setOrientation(0);
+          setColumn(0);
+        }else{
+          setOrientation(1);
+          setColumn(5);
+        }
+      }
+      if(bin0 != 0){
+        setOrientation(2);
+        setColumn(1);
+      }else{
+        setOrientation(3);
+        setColumn(4);
+      }
+    }
   }
 }
 
@@ -189,10 +363,12 @@ void StatsTask(void)
     YKIdleCount = 0;
     YKDelayTask(5);
     max = YKIdleCount / 25;
+
     YKIdleCount = 0;
 
     YKNewTask(SimpCommTask, (void *) &SimpCommTaskStk[512], 30);
     YKNewTask(NewPieceTask, (void *) &NewPieceTaskStk[512], 10);
+    StartSimptris();
 
     while (1)
     {
@@ -231,7 +407,6 @@ int main(void)
   NPSemPtr = YKSemCreate(0);
   RCSemPtr = YKSemCreate(1);
 
-  StartSimptris();
   YKRun();
 
 }
