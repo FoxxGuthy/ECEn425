@@ -10,7 +10,7 @@ Description: Application code for EE 425 lab 6 (Message queues)
 #include "simptris.h"
 
 #define TASK_STACK_SIZE   512       /* stack size in words */
-#define MSGQSIZE          40
+#define MSGQSIZE          80
 #define SLIDE 0
 #define ROTATE 1
 #define LEFT 0
@@ -38,18 +38,12 @@ YKQ *MsgQPtr;                   /* actual name of queue */
 
 YKSEM *RCSemPtr;                        /* YKSEM must be defined in yakk.h */
 YKSEM *NPSemPtr;
-YKSEM *TDSemPtr;
 
 extern unsigned NewPieceType;
 extern unsigned NewPieceOrientation;
 extern unsigned NewPieceColumn;
 extern unsigned NewPieceID;
-extern unsigned ScreenBitMap0;
-extern unsigned ScreenBitMap1;
-extern unsigned ScreenBitMap2;
-extern unsigned ScreenBitMap3;
-extern unsigned ScreenBitMap4;
-extern unsigned ScreenBitMap5;
+
 
 
 // Variable for new task piece tracking
@@ -162,12 +156,6 @@ while (1)
 
 void NewPieceTask(void)
 {
-  int col0Level;
-  int col1Level;
-  int col2Level;
-  int col3Level;
-  int col4Level;
-  int col5Level;
 
   while(1){
     bin0B = bin0A;
@@ -202,53 +190,55 @@ void NewPieceTask(void)
       if(NewPieceOrientation==1){ // if the piece is vertical
         addToQueue(NewPieceID, ROTATE, CW);
       }
-      if(bin0B==FLAT && bin1B==FLAT){
-        if(bin0BL < bin1BL){
+      if(bin0B==FLAT){
+        if(bin1B==FLAT){
+          if(bin0BL < bin1BL){
+            setColumn(1);
+            bin0AL++;
+            bin0A = FLAT;
+          }else{
+            setColumn(4);
+            bin1AL++;
+            bin1A = FLAT;
+
+          }
+        }else{
           setColumn(1);
           bin0AL++;
           bin0A = FLAT;
-        }else{
-          setColumn(4);
-          bin1AL++;
-          bin1A = FLAT;
-
         }
       }else{
-        if(bin0B==FLAT){
-          setColumn(1);
-          bin0AL++;
-          bin0A = FLAT;
-        }else{
           setColumn(4);
           bin1AL++;
           bin1A = FLAT;
-        }
       }
 
 
     }else{// the piece is a corner piece
-      if((bin0B==FLAT) && (bin1B==FLAT)){
-        if(bin0BL < bin1BL){
-          setOrientation(0);
-          setColumn(0);
-          bin0AL++;
-          bin0A = CORNER;
+      if((bin0B==FLAT)){
+        if(bin1B==FLAT){
+          if(bin0BL < bin1BL){
+            setOrientation(0);
+            setColumn(0);
+            bin0AL++;
+            bin0A = CORNER;
+          }else{
+            setOrientation(1);
+            setColumn(5);
+            bin1AL++;
+            bin1A = CORNER;
+          }
         }else{
-          setOrientation(1);
-          setColumn(5);
+          setOrientation(3);
+          setColumn(3);
           bin1AL++;
-          bin1A = CORNER;
+          bin1A = FLAT;
         }
-      }else if(bin0B != FLAT){
+      }else{
         setOrientation(2);
         setColumn(2);
         bin0AL++;
         bin0A = FLAT;
-      }else{
-        setOrientation(3);
-        setColumn(3);
-        bin1AL++;
-        bin1A = FLAT;
       }
     }
   }
@@ -265,7 +255,7 @@ void StatsTask(void)
 
     YKIdleCount = 0;
 
-    YKNewTask(SimpCommTask, (void *) &SimpCommTaskStk[TASK_STACK_SIZE], 30);
+    YKNewTask(SimpCommTask, (void *) &SimpCommTaskStk[TASK_STACK_SIZE], 5);
     YKNewTask(NewPieceTask, (void *) &NewPieceTaskStk[TASK_STACK_SIZE], 10);
     StartSimptris();
 
@@ -283,7 +273,7 @@ void StatsTask(void)
         printString(", CPU: ");
         tmp = (int) (idleCount/max);
         printInt(100-tmp);
-        printString("% >\r\n");
+        printString("%>\r\n");
 
         YKEnterMutex();
         YKCtxSwCount = 0;
@@ -301,7 +291,7 @@ int main(void)
 
   YKNewTask(StatsTask, (void *) &StatsTaskStk[TASK_STACK_SIZE], 50);
 
-  SeedSimptris(10947);
+  SeedSimptris(0xDEADBEEF);
   //87245
   NPSemPtr = YKSemCreate(0);
   RCSemPtr = YKSemCreate(1);

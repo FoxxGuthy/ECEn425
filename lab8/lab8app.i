@@ -141,7 +141,7 @@ void SeedSimptris(long seed);
 void StartSimptris(void);
 # 11 "lab8app.c" 2
 # 27 "lab8app.c"
-struct msg MsgArray[80];
+struct msg MsgArray[160];
 int nextMsg = 0;
 
 
@@ -150,23 +150,17 @@ int NewPieceTaskStk[512];
 int StatsTaskStk[512];
 
 
-void *MsgQ[40];
+void *MsgQ[80];
 YKQ *MsgQPtr;
 
 YKSEM *RCSemPtr;
 YKSEM *NPSemPtr;
-YKSEM *TDSemPtr;
 
 extern unsigned NewPieceType;
 extern unsigned NewPieceOrientation;
 extern unsigned NewPieceColumn;
 extern unsigned NewPieceID;
-extern unsigned ScreenBitMap0;
-extern unsigned ScreenBitMap1;
-extern unsigned ScreenBitMap2;
-extern unsigned ScreenBitMap3;
-extern unsigned ScreenBitMap4;
-extern unsigned ScreenBitMap5;
+
 
 
 
@@ -197,7 +191,7 @@ void addToQueue(int pieceID, int cmd, int direction){
 
   if (YKQPost(MsgQPtr, (void *) &(MsgArray[nextMsg])) == 0)
    printString("  addToQ: queue overflow! \n");
- else if (++nextMsg >= 80)
+ else if (++nextMsg >= 160)
    nextMsg = 0;
 
 }
@@ -279,12 +273,6 @@ while (1)
 
 void NewPieceTask(void)
 {
-  int col0Level;
-  int col1Level;
-  int col2Level;
-  int col3Level;
-  int col4Level;
-  int col5Level;
 
   while(1){
     bin0B = bin0A;
@@ -319,53 +307,55 @@ void NewPieceTask(void)
       if(NewPieceOrientation==1){
         addToQueue(NewPieceID, 1, 1);
       }
-      if(bin0B==0 && bin1B==0){
-        if(bin0BL < bin1BL){
+      if(bin0B==0){
+        if(bin1B==0){
+          if(bin0BL < bin1BL){
+            setColumn(1);
+            bin0AL++;
+            bin0A = 0;
+          }else{
+            setColumn(4);
+            bin1AL++;
+            bin1A = 0;
+
+          }
+        }else{
           setColumn(1);
           bin0AL++;
           bin0A = 0;
-        }else{
-          setColumn(4);
-          bin1AL++;
-          bin1A = 0;
-
         }
       }else{
-        if(bin0B==0){
-          setColumn(1);
-          bin0AL++;
-          bin0A = 0;
-        }else{
           setColumn(4);
           bin1AL++;
           bin1A = 0;
-        }
       }
 
 
     }else{
-      if((bin0B==0) && (bin1B==0)){
-        if(bin0BL < bin1BL){
-          setOrientation(0);
-          setColumn(0);
-          bin0AL++;
-          bin0A = 1;
+      if((bin0B==0)){
+        if(bin1B==0){
+          if(bin0BL < bin1BL){
+            setOrientation(0);
+            setColumn(0);
+            bin0AL++;
+            bin0A = 1;
+          }else{
+            setOrientation(1);
+            setColumn(5);
+            bin1AL++;
+            bin1A = 1;
+          }
         }else{
-          setOrientation(1);
-          setColumn(5);
+          setOrientation(3);
+          setColumn(3);
           bin1AL++;
-          bin1A = 1;
+          bin1A = 0;
         }
-      }else if(bin0B != 0){
+      }else{
         setOrientation(2);
         setColumn(2);
         bin0AL++;
         bin0A = 0;
-      }else{
-        setOrientation(3);
-        setColumn(3);
-        bin1AL++;
-        bin1A = 0;
       }
     }
   }
@@ -382,7 +372,7 @@ void StatsTask(void)
 
     YKIdleCount = 0;
 
-    YKNewTask(SimpCommTask, (void *) &SimpCommTaskStk[512], 30);
+    YKNewTask(SimpCommTask, (void *) &SimpCommTaskStk[512], 5);
     YKNewTask(NewPieceTask, (void *) &NewPieceTaskStk[512], 10);
     StartSimptris();
 
@@ -400,7 +390,7 @@ void StatsTask(void)
         printString(", CPU: ");
         tmp = (int) (idleCount/max);
         printInt(100-tmp);
-        printString("% >\r\n");
+        printString("%>\r\n");
 
         YKEnterMutex();
         YKCtxSwCount = 0;
@@ -414,11 +404,11 @@ int main(void)
 {
   YKInitialize();
 
-  MsgQPtr = YKQCreate(MsgQ, 40);
+  MsgQPtr = YKQCreate(MsgQ, 80);
 
   YKNewTask(StatsTask, (void *) &StatsTaskStk[512], 50);
 
-  SeedSimptris(10947);
+  SeedSimptris(0xDEADBEEF);
 
   NPSemPtr = YKSemCreate(0);
   RCSemPtr = YKSemCreate(1);

@@ -1139,11 +1139,11 @@ L_lab8app_1:
 	DB	"ATQ: CMD:",0
 	ALIGN	2
 addToQueue:
-	; >>>>> Line:	68
-	; >>>>> void addToQueue(int pieceID, int cmd, int direction){ 
+	; >>>>> Line:	62
+	; >>>>> PieceOrientation - Orientation; 
 	jmp	L_lab8app_4
 L_lab8app_5:
-	; >>>>> Line:	70
+	; >>>>> Line:	64
 	; >>>>> MsgArray[nextMsg].pieceID = pieceID; 
 	mov	ax, word [nextMsg]
 	mov	cx, 6
@@ -1152,7 +1152,7 @@ L_lab8app_5:
 	add	si, MsgArray
 	mov	ax, word [bp+4]
 	mov	word [si], ax
-	; >>>>> Line:	71
+	; >>>>> Line:	65
 	; >>>>> MsgArray[nextMsg].cmd = cmd; 
 	mov	ax, word [nextMsg]
 	mov	cx, 6
@@ -1162,7 +1162,7 @@ L_lab8app_5:
 	add	si, 2
 	mov	ax, word [bp+6]
 	mov	word [si], ax
-	; >>>>> Line:	72
+	; >>>>> Line:	66
 	; >>>>> MsgArray[nextMsg].direction = direction; 
 	mov	ax, word [nextMsg]
 	mov	cx, 6
@@ -1172,37 +1172,37 @@ L_lab8app_5:
 	add	si, 4
 	mov	ax, word [bp+8]
 	mov	word [si], ax
-	; >>>>> Line:	73
+	; >>>>> Line:	67
 	; >>>>> if(0==1){ 
 	jmp	L_lab8app_6
-	; >>>>> Line:	74
+	; >>>>> Line:	68
 	; >>>>> printString("ATQ: CMD:"); 
 	mov	ax, L_lab8app_1
 	push	ax
 	call	printString
 	add	sp, 2
-	; >>>>> Line:	75
+	; >>>>> Line:	69
 	; >>>>> printInt(cmd); 
 	push	word [bp+6]
 	call	printInt
 	add	sp, 2
-	; >>>>> Line:	76
+	; >>>>> Line:	70
 	; >>>>> printString(" DIR:"); 
 	mov	ax, L_lab8app_2
 	push	ax
 	call	printString
 	add	sp, 2
-	; >>>>> Line:	77
+	; >>>>> Line:	71
 	; >>>>> printInt(direction); 
 	push	word [bp+8]
 	call	printInt
 	add	sp, 2
-	; >>>>> Line:	78
+	; >>>>> Line:	72
 	; >>>>> printNewLine(); 
 	call	printNewLine
 L_lab8app_6:
-	; >>>>> Line:	81
-	; >>>>> if (YKQPost(MsgQPtr, (void *) &(MsgArray[nextMsg]) 
+	; >>>>> Line:	75
+	; >>>>> if (YKQPost(MsgQPtr, (void *) &(MsgArray[nextMsg])) == 0) 
 	mov	ax, word [nextMsg]
 	mov	cx, 6
 	imul	cx
@@ -1213,7 +1213,7 @@ L_lab8app_6:
 	add	sp, 4
 	test	ax, ax
 	jne	L_lab8app_7
-	; >>>>> Line:	82
+	; >>>>> Line:	76
 	; >>>>> printString("  addToQ: queue overflow! \n"); 
 	mov	ax, L_lab8app_3
 	push	ax
@@ -1221,14 +1221,14 @@ L_lab8app_6:
 	add	sp, 2
 	jmp	L_lab8app_8
 L_lab8app_7:
-	; >>>>> Line:	83
-	; >>>>> else if (++nextMsg >= 80) 
+	; >>>>> Line:	77
+	; >>>>> else if (++nextMsg >= 160) 
 	mov	ax, word [nextMsg]
 	inc	ax
 	mov	word [nextMsg], ax
-	cmp	ax, 80
+	cmp	ax, 160
 	jl	L_lab8app_9
-	; >>>>> Line:	84
+	; >>>>> Line:	78
 	; >>>>> nextMsg = 0; 
 	mov	word [nextMsg], 0
 L_lab8app_9:
@@ -1242,17 +1242,17 @@ L_lab8app_4:
 	jmp	L_lab8app_5
 	ALIGN	2
 setOrientation:
-	; >>>>> Line:	88
+	; >>>>> Line:	82
 	; >>>>> void setOrientation(int Orientation){ 
 	jmp	L_lab8app_11
 L_lab8app_12:
-	; >>>>> Line:	91
-	; >>>>> switch(dif) { 
+	; >>>>> Line:	85
+	; >>>>> switch(di 
 	mov	ax, word [NewPieceOrientation]
 	sub	ax, word [bp+4]
 	mov	word [bp-2], ax
-	; >>>>> Line:	91
-	; >>>>> switch(dif) { 
+	; >>>>> Line:	85
+	; >>>>> switch(di 
 	mov	ax, word [bp-2]
 	sub	ax, -3
 	je	L_lab8app_15
@@ -1270,7 +1270,7 @@ L_lab8app_12:
 	je	L_lab8app_21
 	jmp	L_lab8app_14
 L_lab8app_15:
-	; >>>>> Line:	93
+	; >>>>> Line:	87
 	; >>>>> addToQueue(NewPieceID, 1, 1); 
 	mov	ax, 1
 	push	ax
@@ -1279,11 +1279,11 @@ L_lab8app_15:
 	push	word [NewPieceID]
 	call	addToQueue
 	add	sp, 6
-	; >>>>> Line:	94
+	; >>>>> Line:	88
 	; >>>>> break; 
 	jmp	L_lab8app_13
 L_lab8app_16:
-	; >>>>> Line:	96
+	; >>>>> Line:	90
 	; >>>>> addToQueue(NewPieceID, 1, 0); 
 	xor	ax, ax
 	push	ax
@@ -1292,7 +1292,7 @@ L_lab8app_16:
 	push	word [NewPieceID]
 	call	addToQueue
 	add	sp, 6
-	; >>>>> Line:	97
+	; >>>>> Line:	91
 	; >>>>> addToQueue(NewPieceID, 1, 0); 
 	xor	ax, ax
 	push	ax
@@ -1301,11 +1301,11 @@ L_lab8app_16:
 	push	word [NewPieceID]
 	call	addToQueue
 	add	sp, 6
-	; >>>>> Line:	98
+	; >>>>> Line:	92
 	; >>>>> break; 
 	jmp	L_lab8app_13
 L_lab8app_17:
-	; >>>>> Line:	100
+	; >>>>> Line:	94
 	; >>>>> addToQueue(NewPieceID, 1, 0); 
 	xor	ax, ax
 	push	ax
@@ -1314,15 +1314,15 @@ L_lab8app_17:
 	push	word [NewPieceID]
 	call	addToQueue
 	add	sp, 6
-	; >>>>> Line:	101
+	; >>>>> Line:	95
 	; >>>>> break; 
 	jmp	L_lab8app_13
 L_lab8app_18:
-	; >>>>> Line:	103
+	; >>>>> Line:	97
 	; >>>>> break; 
 	jmp	L_lab8app_13
 L_lab8app_19:
-	; >>>>> Line:	105
+	; >>>>> Line:	99
 	; >>>>> addToQueue(NewPieceID, 1, 1); 
 	mov	ax, 1
 	push	ax
@@ -1331,11 +1331,11 @@ L_lab8app_19:
 	push	word [NewPieceID]
 	call	addToQueue
 	add	sp, 6
-	; >>>>> Line:	106
+	; >>>>> Line:	100
 	; >>>>> break; 
 	jmp	L_lab8app_13
 L_lab8app_20:
-	; >>>>> Line:	108
+	; >>>>> Line:	102
 	; >>>>> addToQueue(NewPieceID, 1, 1); 
 	mov	ax, 1
 	push	ax
@@ -1344,7 +1344,7 @@ L_lab8app_20:
 	push	word [NewPieceID]
 	call	addToQueue
 	add	sp, 6
-	; >>>>> Line:	109
+	; >>>>> Line:	103
 	; >>>>> addToQueue(NewPieceID, 1, 1); 
 	mov	ax, 1
 	push	ax
@@ -1353,11 +1353,11 @@ L_lab8app_20:
 	push	word [NewPieceID]
 	call	addToQueue
 	add	sp, 6
-	; >>>>> Line:	110
+	; >>>>> Line:	104
 	; >>>>> break; 
 	jmp	L_lab8app_13
 L_lab8app_21:
-	; >>>>> Line:	112
+	; >>>>> Line:	106
 	; >>>>> addToQueue(NewPieceID, 1, 0); 
 	xor	ax, ax
 	push	ax
@@ -1368,10 +1368,10 @@ L_lab8app_21:
 	add	sp, 6
 L_lab8app_14:
 L_lab8app_13:
-	; >>>>> Line:	113
+	; >>>>> Line:	107
 	; >>>>> break; 
 L_lab8app_22:
-	; >>>>> Line:	118
+	; >>>>> Line:	112
 	; >>>>> return ; 
 	mov	sp, bp
 	pop	bp
@@ -1383,29 +1383,29 @@ L_lab8app_11:
 	jmp	L_lab8app_12
 	ALIGN	2
 setColumn:
-	; >>>>> Line:	121
+	; >>>>> Line:	115
 	; >>>>> void setColumn(int Column){ 
 	jmp	L_lab8app_24
 L_lab8app_25:
-	; >>>>> Line:	124
+	; >>>>> Line:	118
 	; >>>>> if(NewPieceColumn > Column){ 
 	mov	word [bp-2], 0
-	; >>>>> Line:	124
+	; >>>>> Line:	118
 	; >>>>> if(NewPieceColumn > Column){ 
 	mov	ax, word [NewPieceColumn]
 	cmp	ax, word [bp+4]
 	jbe	L_lab8app_26
-	; >>>>> Line:	125
+	; >>>>> Line:	119
 	; >>>>> dif = NewPieceColumn - Column; 
 	mov	ax, word [NewPieceColumn]
 	sub	ax, word [bp+4]
 	mov	word [bp-4], ax
-	; >>>>> Line:	126
+	; >>>>> Line:	120
 	; >>>>> for(i=0;i<dif;i++){ 
 	mov	word [bp-2], 0
 	jmp	L_lab8app_28
 L_lab8app_27:
-	; >>>>> Line:	127
+	; >>>>> Line:	121
 	; >>>>> addToQueue(NewPieceID, 0, 0); 
 	xor	ax, ax
 	push	ax
@@ -1423,23 +1423,23 @@ L_lab8app_28:
 L_lab8app_29:
 	jmp	L_lab8app_31
 L_lab8app_26:
-	; >>>>> Line:	129
+	; >>>>> Line:	123
 	; >>>>> }else if(NewPieceColumn < Column){ 
 	mov	ax, word [NewPieceColumn]
 	cmp	ax, word [bp+4]
 	jae	L_lab8app_32
-	; >>>>> Line:	130
+	; >>>>> Line:	124
 	; >>>>> dif = Column - NewPieceColumn; 
 	mov	ax, word [bp+4]
 	sub	ax, word [NewPieceColumn]
 	mov	word [bp-4], ax
-	; >>>>> Line:	131
+	; >>>>> Line:	125
 	; >>>>> for(i=0;i<dif;i++){ 
 	mov	word [bp-2], 0
 	jmp	L_lab8app_34
 L_lab8app_33:
-	; >>>>> Line:	132
-	; >>>>> addToQueue(NewPi 
+	; >>>>> Line:	126
+	; >>>>> addToQueue(NewPieceID, 0, 1); 
 	mov	ax, 1
 	push	ax
 	xor	ax, ax
@@ -1457,7 +1457,7 @@ L_lab8app_35:
 L_lab8app_32:
 L_lab8app_31:
 L_lab8app_37:
-	; >>>>> Line:	137
+	; >>>>> Line:	131
 	; >>>>> return ; 
 	mov	sp, bp
 	pop	bp
@@ -1473,66 +1473,66 @@ L_lab8app_39:
 	DB	"C: ",0
 	ALIGN	2
 SimpCommTask:
-	; >>>>> Line:	141
+	; >>>>> Line:	135
 	; >>>>> { 
 	jmp	L_lab8app_41
 L_lab8app_42:
-	; >>>>> Line:	143
+	; >>>>> Line:	137
 	; >>>>> while (1) 
 	jmp	L_lab8app_44
 L_lab8app_43:
-	; >>>>> Line:	145
+	; >>>>> Line:	139
 	; >>>>> YKSemPend(RCSemPtr); 
 	push	word [RCSemPtr]
 	call	YKSemPend
 	add	sp, 2
-	; >>>>> Line:	146
+	; >>>>> Line:	140
 	; >>>>> tmp = (struct msg *) YKQPend(MsgQPtr); 
 	push	word [MsgQPtr]
 	call	YKQPend
 	add	sp, 2
 	mov	word [bp-2], ax
-	; >>>>> Line:	147
+	; >>>>> Line:	141
 	; >>>>> if(0==1){ 
 	jmp	L_lab8app_46
-	; >>>>> Line:	148
+	; >>>>> Line:	142
 	; >>>>> printString("C: "); 
 	mov	ax, L_lab8app_39
 	push	ax
 	call	printString
 	add	sp, 2
-	; >>>>> Line:	149
-	; >>>>> printInt(tmp->cmd); 
+	; >>>>> Line:	143
+	; >>>>>  
 	mov	si, word [bp-2]
 	add	si, 2
 	push	word [si]
 	call	printInt
 	add	sp, 2
-	; >>>>> Line:	150
+	; >>>>> Line:	144
 	; >>>>> printString(" D: "); 
 	mov	ax, L_lab8app_40
 	push	ax
 	call	printString
 	add	sp, 2
-	; >>>>> Line:	151
+	; >>>>> Line:	145
 	; >>>>> printInt(tmp->direction); 
 	mov	si, word [bp-2]
 	add	si, 4
 	push	word [si]
 	call	printInt
 	add	sp, 2
-	; >>>>> Line:	152
+	; >>>>> Line:	146
 	; >>>>> printNewLine(); 
 	call	printNewLine
 L_lab8app_46:
-	; >>>>> Line:	154
+	; >>>>> Line:	148
 	; >>>>> if(tmp->cmd == 0){ 
 	mov	si, word [bp-2]
 	add	si, 2
 	mov	ax, word [si]
 	test	ax, ax
 	jne	L_lab8app_47
-	; >>>>> Line:	155
+	; >>>>> Line:	149
 	; >>>>> SlidePiece(tmp->pieceID, tmp->direction); 
 	mov	si, word [bp-2]
 	add	si, 4
@@ -1543,7 +1543,7 @@ L_lab8app_46:
 	add	sp, 4
 	jmp	L_lab8app_48
 L_lab8app_47:
-	; >>>>> Line:	157
+	; >>>>> Line:	151
 	; >>>>> RotatePiece(tmp->pieceID, tmp->direction); 
 	mov	si, word [bp-2]
 	add	si, 4
@@ -1568,120 +1568,120 @@ L_lab8app_50:
 	DB	"NP NPTSK ",0xD,0xA,0
 	ALIGN	2
 NewPieceTask:
-	; >>>>> Line:	164
+	; >>>>> Line:	158
 	; >>>>> { 
 	jmp	L_lab8app_51
 L_lab8app_52:
-	; >>>>> Line:	172
+	; >>>>> Line:	160
 	; >>>>> while(1){ 
 	jmp	L_lab8app_54
 L_lab8app_53:
-	; >>>>> Line:	173
+	; >>>>> Line:	161
 	; >>>>> bin0B = bin0A; 
 	mov	al, byte [bin0A]
 	mov	byte [bin0B], al
-	; >>>>> Line:	174
+	; >>>>> Line:	162
 	; >>>>> bin1B = bin1A; 
 	mov	al, byte [bin1A]
 	mov	byte [bin1B], al
-	; >>>>> Line:	175
+	; >>>>> Line:	163
 	; >>>>> bin0BL = bin0AL; 
 	mov	al, byte [bin0AL]
 	mov	byte [bin0BL], al
-	; >>>>> Line:	176
+	; >>>>> Line:	164
 	; >>>>> bin1BL = bin1AL; 
 	mov	al, byte [bin1AL]
 	mov	byte [bin1BL], al
-	; >>>>> Line:	177
+	; >>>>> Line:	165
 	; >>>>> if(0==1){ 
 	jmp	L_lab8app_56
-	; >>>>> Line:	178
+	; >>>>> Line:	166
 	; >>>>> printInt(bin0B); 
 	mov	al, byte [bin0B]
 	cbw
 	push	ax
 	call	printInt
 	add	sp, 2
-	; >>>>> Line:	179
+	; >>>>> Line:	167
 	; >>>>> printInt(bin1B); 
 	mov	al, byte [bin1B]
 	cbw
 	push	ax
 	call	printInt
 	add	sp, 2
-	; >>>>> Line:	180
+	; >>>>> Line:	168
 	; >>>>> printInt(bin0BL); 
 	mov	al, byte [bin0BL]
 	cbw
 	push	ax
 	call	printInt
 	add	sp, 2
-	; >>>>> Line:	181
+	; >>>>> Line:	169
 	; >>>>> printInt(bin1BL); 
 	mov	al, byte [bin1BL]
 	cbw
 	push	ax
 	call	printInt
 	add	sp, 2
-	; >>>>> Line:	182
+	; >>>>> Line:	170
 	; >>>>> printNewLine(); 
 	call	printNewLine
 L_lab8app_56:
-	; >>>>> Line:	185
-	; >>>>> YKSemPend(NPSemPtr); 
+	; >>>>> Line:	173
+	; >>>>> e{ 
 	push	word [NPSemPtr]
 	call	YKSemPend
 	add	sp, 2
-	; >>>>> Line:	186
+	; >>>>> Line:	174
 	; >>>>> if(0==1){ 
 	jmp	L_lab8app_57
-	; >>>>> Line:	187
+	; >>>>> Line:	175
 	; >>>>> printString("NP NPTSK \r\n"); 
 	mov	ax, L_lab8app_50
 	push	ax
 	call	printString
 	add	sp, 2
 L_lab8app_57:
-	; >>>>> Line:	192
+	; >>>>> Line:	180
 	; >>>>> if(NewPieceColumn==0){ 
 	mov	ax, word [NewPieceColumn]
 	test	ax, ax
 	jne	L_lab8app_58
-	; >>>>> Line:	193
+	; >>>>> Line:	181
 	; >>>>> setColumn(1); 
 	mov	ax, 1
 	push	ax
 	call	setColumn
 	add	sp, 2
-	; >>>>> Line:	194
+	; >>>>> Line:	182
 	; >>>>> NewPieceColumn = 1; 
 	mov	word [NewPieceColumn], 1
 	jmp	L_lab8app_59
 L_lab8app_58:
-	; >>>>> Line:	195
+	; >>>>> Line:	183
 	; >>>>> }else if(NewPieceColumn==5){ 
 	cmp	word [NewPieceColumn], 5
 	jne	L_lab8app_60
-	; >>>>> Line:	196
+	; >>>>> Line:	184
 	; >>>>> setColumn(4); 
 	mov	ax, 4
 	push	ax
 	call	setColumn
 	add	sp, 2
-	; >>>>> Line:	197
-	; >>>>> +; 
+	; >>>>> Line:	185
+	; >>>>> NewPieceColumn = 4; 
 	mov	word [NewPieceColumn], 4
 L_lab8app_60:
 L_lab8app_59:
-	; >>>>> Line:	200
+	; >>>>> Line:	188
 	; >>>>> if(NewPieceType==1){ 
 	cmp	word [NewPieceType], 1
 	jne	L_lab8app_61
-	; >>>>> Line:	202
+	; >>>>> Line:	190
 	; >>>>> if(NewPieceOrientation==1){ 
 	cmp	word [NewPieceOrientation], 1
 	jne	L_lab8app_62
-	; >>>>> Line:	203
+	; >>>>> Line:	191
 	; >>>>> addToQueue(NewPieceID, 1, 1); 
 	mov	ax, 1
 	push	ax
@@ -1691,33 +1691,65 @@ L_lab8app_59:
 	call	addToQueue
 	add	sp, 6
 L_lab8app_62:
-	; >>>>> Line:	205
-	; >>>>> if(bin0B==0 && bin1B==0){ 
+	; >>>>> Line:	193
+	; >>>>> if(bin0B==0){ 
 	mov	al, byte [bin0B]
 	test	al, al
 	jne	L_lab8app_63
+	; >>>>> Line:	194
+	; >>>>> if(bin1B==0){ 
 	mov	al, byte [bin1B]
 	test	al, al
-	jne	L_lab8app_63
-	; >>>>> Line:	206
+	jne	L_lab8app_64
+	; >>>>> Line:	195
 	; >>>>> if(bin0BL < bin1BL){ 
 	mov	al, byte [bin1BL]
 	cmp	al, byte [bin0BL]
-	jle	L_lab8app_64
-	; >>>>> Line:	207
+	jle	L_lab8app_65
+	; >>>>> Line:	196
 	; >>>>> setColumn(1); 
 	mov	ax, 1
 	push	ax
 	call	setColumn
 	add	sp, 2
-	; >>>>> Line:	208
+	; >>>>> Line:	197
 	; >>>>> bin0AL++; 
 	inc	byte [bin0AL]
-	; >>>>> Line:	209
+	; >>>>> Line:	198
 	; >>>>> bin0A = 0; 
 	mov	byte [bin0A], 0
-	jmp	L_lab8app_65
+	jmp	L_lab8app_66
+L_lab8app_65:
+	; >>>>> Line:	200
+	; >>>>> mn(5); 
+	mov	ax, 4
+	push	ax
+	call	setColumn
+	add	sp, 2
+	; >>>>> Line:	201
+	; >>>>> bin1AL++; 
+	inc	byte [bin1AL]
+	; >>>>> Line:	202
+	; >>>>> bin1A = 0; 
+	mov	byte [bin1A], 0
+L_lab8app_66:
+	jmp	L_lab8app_67
 L_lab8app_64:
+	; >>>>> Line:	206
+	; >>>>> setColumn(1); 
+	mov	ax, 1
+	push	ax
+	call	setColumn
+	add	sp, 2
+	; >>>>> Line:	207
+	; >>>>> bin0AL++; 
+	inc	byte [bin0AL]
+	; >>>>> Line:	208
+	; >>>>> bin0A = 0; 
+	mov	byte [bin0A], 0
+L_lab8app_67:
+	jmp	L_lab8app_68
+L_lab8app_63:
 	; >>>>> Line:	211
 	; >>>>> setColumn(4); 
 	mov	ax, 4
@@ -1730,143 +1762,105 @@ L_lab8app_64:
 	; >>>>> Line:	213
 	; >>>>> bin1A = 0; 
 	mov	byte [bin1A], 0
-L_lab8app_65:
-	jmp	L_lab8app_66
-L_lab8app_63:
-	; >>>>> Line:	217
-	; >>>>> if(bin0B==0){ 
-	mov	al, byte [bin0B]
-	test	al, al
-	jne	L_lab8app_67
-	; >>>>> Line:	218
-	; >>>>> setColumn(1); 
-	mov	ax, 1
-	push	ax
-	call	setColumn
-	add	sp, 2
-	; >>>>> Line:	219
-	; >>>>> bin0AL++; 
-	inc	byte [bin0AL]
-	; >>>>> Line:	220
-	; >>>>> bin0A = 0; 
-	mov	byte [bin0A], 0
-	jmp	L_lab8app_68
-L_lab8app_67:
-	; >>>>> Line:	222
-	; >>>>> setColumn(4); 
-	mov	ax, 4
-	push	ax
-	call	setColumn
-	add	sp, 2
-	; >>>>> Line:	223
-	; >>>>> bin1AL++; 
-	inc	byte [bin1AL]
-	; >>>>> Line:	224
-	; >>>>> in1 
-	mov	byte [bin1A], 0
 L_lab8app_68:
-L_lab8app_66:
 	jmp	L_lab8app_69
 L_lab8app_61:
-	; >>>>> Line:	230
-	; >>>>> if((bin0B==0) && (bin1B==0)){ 
+	; >>>>> Line:	218
+	; >>>>> if((bin0B==0)){ 
 	mov	al, byte [bin0B]
 	test	al, al
 	jne	L_lab8app_70
+	; >>>>> Line:	219
+	; >>>>> if(bin1B==0){ 
 	mov	al, byte [bin1B]
 	test	al, al
-	jne	L_lab8app_70
-	; >>>>> Line:	231
+	jne	L_lab8app_71
+	; >>>>> Line:	220
 	; >>>>> if(bin0BL < bin1BL){ 
 	mov	al, byte [bin1BL]
 	cmp	al, byte [bin0BL]
-	jle	L_lab8app_71
-	; >>>>> Line:	232
+	jle	L_lab8app_72
+	; >>>>> Line:	221
 	; >>>>> setOrientation(0); 
 	xor	ax, ax
 	push	ax
 	call	setOrientation
 	add	sp, 2
-	; >>>>> Line:	233
+	; >>>>> Line:	222
 	; >>>>> setColumn(0); 
 	xor	ax, ax
 	push	ax
 	call	setColumn
 	add	sp, 2
-	; >>>>> Line:	234
+	; >>>>> Line:	223
 	; >>>>> bin0AL++; 
 	inc	byte [bin0AL]
-	; >>>>> Line:	235
+	; >>>>> Line:	224
 	; >>>>> bin0A = 1; 
 	mov	byte [bin0A], 1
-	jmp	L_lab8app_72
-L_lab8app_71:
-	; >>>>> Line:	237
+	jmp	L_lab8app_73
+L_lab8app_72:
+	; >>>>> Line:	226
 	; >>>>> setOrientation(1); 
 	mov	ax, 1
 	push	ax
 	call	setOrientation
 	add	sp, 2
-	; >>>>> Line:	238
+	; >>>>> Line:	227
 	; >>>>> setColumn(5); 
 	mov	ax, 5
 	push	ax
 	call	setColumn
 	add	sp, 2
-	; >>>>> Line:	239
+	; >>>>> Line:	228
 	; >>>>> bin1AL++; 
 	inc	byte [bin1AL]
-	; >>>>> Line:	240
+	; >>>>> Line:	229
 	; >>>>> bin1A = 1; 
 	mov	byte [bin1A], 1
-L_lab8app_72:
-	jmp	L_lab8app_73
-L_lab8app_70:
-	; >>>>> Line:	242
-	; >>>>> }else if(bin0B != 0){ 
-	mov	al, byte [bin0B]
-	test	al, al
-	je	L_lab8app_74
-	; >>>>> Line:	243
-	; >>>>> setOrientation(2); 
-	mov	ax, 2
-	push	ax
-	call	setOrientation
-	add	sp, 2
-	; >>>>> Line:	244
-	; >>>>> setColumn(2); 
-	mov	ax, 2
-	push	ax
-	call	setColumn
-	add	sp, 2
-	; >>>>> Line:	245
-	; >>>>> bin0AL++; 
-	inc	byte [bin0AL]
-	; >>>>> Line:	246
-	; >>>>> bin0A = 0; 
-	mov	byte [bin0A], 0
-	jmp	L_lab8app_75
-L_lab8app_74:
-	; >>>>> Line:	248
+L_lab8app_73:
+	jmp	L_lab8app_74
+L_lab8app_71:
+	; >>>>> Line:	232
 	; >>>>> setOrientation(3); 
 	mov	ax, 3
 	push	ax
 	call	setOrientation
 	add	sp, 2
-	; >>>>> Line:	249
+	; >>>>> Line:	233
 	; >>>>> setColumn(3); 
 	mov	ax, 3
 	push	ax
 	call	setColumn
 	add	sp, 2
-	; >>>>> Line:	250
-	; >>>>> KIdleCount; 
+	; >>>>> Line:	234
+	; >>>>> bin1AL++; 
 	inc	byte [bin1AL]
-	; >>>>> Line:	251
+	; >>>>> Line:	235
 	; >>>>> bin1A = 0; 
 	mov	byte [bin1A], 0
+L_lab8app_74:
+	jmp	L_lab8app_75
+L_lab8app_70:
+	; >>>>> Line:	238
+	; >>>>> setOrientation(2); 
+	mov	ax, 2
+	push	ax
+	call	setOrientation
+	add	sp, 2
+	; >>>>> Line:	239
+	; >>>>> setColumn(2); 
+	mov	ax, 2
+	push	ax
+	call	setColumn
+	add	sp, 2
+	; >>>>> Line:	240
+	; >>>>> bin0AL++; 
+	inc	byte [bin0AL]
+	; >>>>> Line:	241
+	; >>>>> bin0A = 0; 
+	mov	byte [bin0A], 0
 L_lab8app_75:
-L_lab8app_73:
 L_lab8app_69:
 L_lab8app_54:
 	jmp	L_lab8app_53
@@ -1877,42 +1871,41 @@ L_lab8app_55:
 L_lab8app_51:
 	push	bp
 	mov	bp, sp
-	sub	sp, 12
 	jmp	L_lab8app_52
 L_lab8app_79:
-	DB	"% >",0xD,0xA,0
+	DB	"%>",0xD,0xA,0
 L_lab8app_78:
 	DB	", CPU: ",0
 L_lab8app_77:
 	DB	"<CS: ",0
 	ALIGN	2
 StatsTask:
-	; >>>>> Line:	258
+	; >>>>> Line:	248
 	; >>>>> { 
 	jmp	L_lab8app_80
 L_lab8app_81:
-	; >>>>> Line:	262
+	; >>>>> Line:	252
 	; >>>>> YKIdleCount = 0; 
 	mov	word [YKIdleCount], 0
-	; >>>>> Line:	263
+	; >>>>> Line:	253
 	; >>>>> YKDelayTask(5); 
 	mov	ax, 5
 	push	ax
 	call	YKDelayTask
 	add	sp, 2
-	; >>>>> Line:	264
+	; >>>>> Line:	254
 	; >>>>> max = YKIdleCount / 25; 
 	mov	ax, word [YKIdleCount]
 	cwd
 	mov	cx, 25
 	idiv	cx
 	mov	word [bp-2], ax
-	; >>>>> Line:	266
+	; >>>>> Line:	256
 	; >>>>> YKIdleCount = 0; 
 	mov	word [YKIdleCount], 0
-	; >>>>> Line:	268
-	; >>>>> YKNewTask(SimpCommTask, (void *) &SimpCommTaskStk[512], 30); 
-	mov	al, 30
+	; >>>>> Line:	258
+	; >>>>> YKNewTask(SimpCommTask, (void *) &SimpCo 
+	mov	al, 5
 	push	ax
 	mov	ax, (SimpCommTaskStk+1024)
 	push	ax
@@ -1920,7 +1913,7 @@ L_lab8app_81:
 	push	ax
 	call	YKNewTask
 	add	sp, 6
-	; >>>>> Line:	269
+	; >>>>> Line:	259
 	; >>>>> YKNewTask(NewPieceTask, (void *) &NewPieceTaskStk[512], 10); 
 	mov	al, 10
 	push	ax
@@ -1930,79 +1923,79 @@ L_lab8app_81:
 	push	ax
 	call	YKNewTask
 	add	sp, 6
-	; >>>>> Line:	270
+	; >>>>> Line:	260
 	; >>>>> StartSimptris(); 
 	call	StartSimptris
-	; >>>>> Line:	272
+	; >>>>> Line:	262
 	; >>>>> while (1) 
 	jmp	L_lab8app_83
 L_lab8app_82:
-	; >>>>> Line:	274
+	; >>>>> Line:	264
 	; >>>>> YKDelayTask(20); 
 	mov	ax, 20
 	push	ax
 	call	YKDelayTask
 	add	sp, 2
-	; >>>>> Line:	276
+	; >>>>> Line:	266
 	; >>>>> YKEnterMutex(); 
 	call	YKEnterMutex
-	; >>>>> Line:	277
+	; >>>>> Line:	267
 	; >>>>> switchCount = YKCtxSwCount; 
 	mov	ax, word [YKCtxSwCount]
 	mov	word [bp-4], ax
-	; >>>>> Line:	278
+	; >>>>> Line:	268
 	; >>>>> idleCount = YKIdleCount; 
 	mov	ax, word [YKIdleCount]
 	mov	word [bp-6], ax
-	; >>>>> Line:	279
-	; >>>>>  
+	; >>>>> Line:	269
+	; >>>>> YKExitMutex(); 
 	call	YKExitMutex
-	; >>>>> Line:	281
+	; >>>>> Line:	271
 	; >>>>> printString("<CS: "); 
 	mov	ax, L_lab8app_77
 	push	ax
 	call	printString
 	add	sp, 2
-	; >>>>> Line:	282
+	; >>>>> Line:	272
 	; >>>>> printInt((int)switchCount); 
 	push	word [bp-4]
 	call	printInt
 	add	sp, 2
-	; >>>>> Line:	283
+	; >>>>> Line:	273
 	; >>>>> printString(", CPU: "); 
 	mov	ax, L_lab8app_78
 	push	ax
 	call	printString
 	add	sp, 2
-	; >>>>> Line:	284
+	; >>>>> Line:	274
 	; >>>>> tmp = (int) (idleCount/max); 
 	mov	ax, word [bp-6]
 	xor	dx, dx
 	div	word [bp-2]
 	mov	word [bp-8], ax
-	; >>>>> Line:	285
+	; >>>>> Line:	275
 	; >>>>> printInt(100-tmp); 
 	mov	ax, 100
 	sub	ax, word [bp-8]
 	push	ax
 	call	printInt
 	add	sp, 2
-	; >>>>> Line:	286
-	; >>>>> printString("% >\r\n"); 
+	; >>>>> Line:	276
+	; >>>>> printString("%>\r\n"); 
 	mov	ax, L_lab8app_79
 	push	ax
 	call	printString
 	add	sp, 2
-	; >>>>> Line:	288
+	; >>>>> Line:	278
 	; >>>>> YKEnterMutex(); 
 	call	YKEnterMutex
-	; >>>>> Line:	289
-	; >>>>> YKCtxSwCount = 0; 
+	; >>>>> Line:	279
+	; >>>>> YKCtxSwCount = 0 
 	mov	word [YKCtxSwCount], 0
-	; >>>>> Line:	290
+	; >>>>> Line:	280
 	; >>>>> YKIdleCount = 0; 
 	mov	word [YKIdleCount], 0
-	; >>>>> Line:	291
+	; >>>>> Line:	281
 	; >>>>> YKExitMutex(); 
 	call	YKExitMutex
 L_lab8app_83:
@@ -2018,23 +2011,23 @@ L_lab8app_80:
 	jmp	L_lab8app_81
 	ALIGN	2
 main:
-	; >>>>> Line:	297
+	; >>>>> Line:	287
 	; >>>>> { 
 	jmp	L_lab8app_86
 L_lab8app_87:
-	; >>>>> Line:	298
+	; >>>>> Line:	288
 	; >>>>> YKInitialize(); 
 	call	YKInitialize
-	; >>>>> Line:	300
-	; >>>>> MsgQPtr = YKQCreate(MsgQ, 40); 
-	mov	ax, 40
+	; >>>>> Line:	290
+	; >>>>> MsgQPtr = YKQCreate(MsgQ, 80); 
+	mov	ax, 80
 	push	ax
 	mov	ax, MsgQ
 	push	ax
 	call	YKQCreate
 	add	sp, 4
 	mov	word [MsgQPtr], ax
-	; >>>>> Line:	302
+	; >>>>> Line:	292
 	; >>>>> YKNewTask(StatsTask, (void *) &StatsTaskStk[512], 50); 
 	mov	al, 50
 	push	ax
@@ -2044,29 +2037,29 @@ L_lab8app_87:
 	push	ax
 	call	YKNewTask
 	add	sp, 6
-	; >>>>> Line:	304
-	; >>>>> SeedSimptris(10947); 
-	mov	ax, 10947
-	xor	dx, dx
+	; >>>>> Line:	294
+	; >>>>> SeedSimptris(0xDEADBEEF); 
+	mov	ax, 48879
+	mov	dx, 57005
 	push	dx
 	push	ax
 	call	SeedSimptris
 	add	sp, 4
-	; >>>>> Line:	306
+	; >>>>> Line:	296
 	; >>>>> NPSemPtr = YKSemCreate(0); 
 	xor	ax, ax
 	push	ax
 	call	YKSemCreate
 	add	sp, 2
 	mov	word [NPSemPtr], ax
-	; >>>>> Line:	307
-	; >>>>> RCSemP 
+	; >>>>> Line:	297
+	; >>>>> RCSemPtr = YKSemCreate(1); 
 	mov	ax, 1
 	push	ax
 	call	YKSemCreate
 	add	sp, 2
 	mov	word [RCSemPtr], ax
-	; >>>>> Line:	310
+	; >>>>> Line:	300
 	; >>>>> YKRun(); 
 	call	YKRun
 	mov	sp, bp
@@ -2078,7 +2071,7 @@ L_lab8app_86:
 	jmp	L_lab8app_87
 	ALIGN	2
 MsgArray:
-	TIMES	480 db 0
+	TIMES	960 db 0
 SimpCommTaskStk:
 	TIMES	1024 db 0
 NewPieceTaskStk:
@@ -2086,14 +2079,12 @@ NewPieceTaskStk:
 StatsTaskStk:
 	TIMES	1024 db 0
 MsgQ:
-	TIMES	80 db 0
+	TIMES	160 db 0
 MsgQPtr:
 	TIMES	2 db 0
 RCSemPtr:
 	TIMES	2 db 0
 NPSemPtr:
-	TIMES	2 db 0
-TDSemPtr:
 	TIMES	2 db 0
 resetISR:
 	push 	bp
@@ -3161,40 +3152,40 @@ L_yakc_54:
 	jmp	L_yakc_55
 	ALIGN	2
 YKDelayTask:
-	; >>>>> Line:	249
-	; >>>>> ate == 0){ 
+	; >>>>> Line:	248
+	; >>>>> tate == 0){ 
 	jmp	L_yakc_64
 L_yakc_65:
-	; >>>>> Line:	252
+	; >>>>> Line:	251
 	; >>>>> YKEnterMutex(); 
 	call	YKEnterMutex
-	; >>>>> Line:	253
+	; >>>>> Line:	252
 	; >>>>> if(newDelayCount == 0){ 
 	mov	ax, word [bp+4]
 	test	ax, ax
 	jne	L_yakc_66
-	; >>>>> Line:	254
+	; >>>>> Line:	253
 	; >>>>> return ; 
 	jmp	L_yakc_67
 L_yakc_66:
-	; >>>>> Line:	256
+	; >>>>> Line:	255
 	; >>>>> currentTask->delayCount = newDelayCount; 
 	mov	si, word [currentTask]
 	add	si, 16
 	mov	ax, word [bp+4]
 	mov	word [si], ax
-	; >>>>> Line:	257
+	; >>>>> Line:	256
 	; >>>>> currentTask->state = 0; 
 	mov	si, word [currentTask]
 	add	si, 2
 	mov	byte [si], 0
-	; >>>>> Line:	259
+	; >>>>> Line:	258
 	; >>>>> YKScheduler(1); 
 	mov	al, 1
 	push	ax
 	call	YKScheduler
 	add	sp, 2
-	; >>>>> Line:	260
+	; >>>>> Line:	259
 	; >>>>> YKExitMutex(); 
 	call	YKExitMutex
 L_yakc_67:
@@ -3207,11 +3198,11 @@ L_yakc_64:
 	jmp	L_yakc_65
 	ALIGN	2
 YKEnterISR:
-	; >>>>> Line:	264
+	; >>>>> Line:	263
 	; >>>>> void YKEnterISR(void) { 
 	jmp	L_yakc_69
 L_yakc_70:
-	; >>>>> Line:	266
+	; >>>>> Line:	265
 	; >>>>> YKISRDepth++; 
 	inc	word [YKISRDepth]
 	mov	sp, bp
@@ -3223,25 +3214,25 @@ L_yakc_69:
 	jmp	L_yakc_70
 	ALIGN	2
 YKExitISR:
-	; >>>>> Line:	269
+	; >>>>> Line:	268
 	; >>>>> void YKExitISR(void) { 
 	jmp	L_yakc_72
 L_yakc_73:
-	; >>>>> Line:	272
+	; >>>>> Line:	271
 	; >>>>> YKISRDepth--; 
 	dec	word [YKISRDepth]
-	; >>>>> Line:	273
+	; >>>>> Line:	272
 	; >>>>> if (YKISRDepth == 0) { 
 	mov	ax, word [YKISRDepth]
 	test	ax, ax
 	jne	L_yakc_74
-	; >>>>> Line:	274
+	; >>>>> Line:	273
 	; >>>>> YKScheduler(1); 
 	mov	al, 1
 	push	ax
 	call	YKScheduler
 	add	sp, 2
-	; >>>>> Line:	275
+	; >>>>> Line:	274
 	; >>>>> YKExitMutex(); 
 	call	YKExitMutex
 L_yakc_74:
@@ -3260,56 +3251,56 @@ L_yakc_76:
 	DB	"IN YKTickHandler",0
 	ALIGN	2
 YKTickHandler:
-	; >>>>> Line:	279
+	; >>>>> Line:	278
 	; >>>>> void YKTickHandler(void) { 
 	jmp	L_yakc_79
 L_yakc_80:
-	; >>>>> Line:	285
+	; >>>>> Line:	284
 	; >>>>> traveser = taskhead; 
 	mov	ax, word [taskhead]
 	mov	word [bp-2], ax
-	; >>>>> Line:	287
+	; >>>>> Line:	286
 	; >>>>> YKTickNum++; 
 	inc	word [YKTickNum]
-	; >>>>> Line:	288
+	; >>>>> Line:	287
 	; >>>>> printDebug("IN YKTickHandler"); 
 	mov	ax, L_yakc_76
 	push	ax
 	call	printDebug
 	add	sp, 2
-	; >>>>> Line:	289
+	; >>>>> Line:	288
 	; >>>>> while(traveser){ 
 	jmp	L_yakc_82
 L_yakc_81:
-	; >>>>> Line:	290
+	; >>>>> Line:	289
 	; >>>>> if(traveser->state == 0){ 
 	mov	si, word [bp-2]
 	add	si, 2
 	mov	al, byte [si]
 	test	al, al
 	jne	L_yakc_84
-	; >>>>> Line:	291
-	; >>>>> traveser->d 
+	; >>>>> Line:	290
+	; >>>>> traveser->de 
 	mov	si, word [bp-2]
 	add	si, 16
 	dec	word [si]
-	; >>>>> Line:	293
+	; >>>>> Line:	292
 	; >>>>> if(traveser->delayCount == 0){ 
 	mov	si, word [bp-2]
 	add	si, 16
 	mov	ax, word [si]
 	test	ax, ax
 	jne	L_yakc_85
-	; >>>>> Line:	295
+	; >>>>> Line:	294
 	; >>>>> if(0 == 1){ 
 	jmp	L_yakc_86
-	; >>>>> Line:	296
+	; >>>>> Line:	295
 	; >>>>> printString("task now READY with priority "); 
 	mov	ax, L_yakc_77
 	push	ax
 	call	printString
 	add	sp, 2
-	; >>>>> Line:	297
+	; >>>>> Line:	296
 	; >>>>> printInt(traveser->priority); 
 	mov	si, word [bp-2]
 	add	si, 3
@@ -3318,29 +3309,29 @@ L_yakc_81:
 	push	ax
 	call	printInt
 	add	sp, 2
-	; >>>>> Line:	298
+	; >>>>> Line:	297
 	; >>>>> printNewLine(); 
 	call	printNewLine
 L_yakc_86:
-	; >>>>> Line:	301
+	; >>>>> Line:	300
 	; >>>>> traveser->state = 1; 
 	mov	si, word [bp-2]
 	add	si, 2
 	mov	byte [si], 1
 L_yakc_85:
-	; >>>>> Line:	304
+	; >>>>> Line:	303
 	; >>>>> if(traveser->delayCount < 0){ 
 	mov	si, word [bp-2]
 	add	si, 16
 	cmp	word [si], 0
 	jge	L_yakc_87
-	; >>>>> Line:	305
+	; >>>>> Line:	304
 	; >>>>> printString("SOMETHING HAS GONE HORRIBLY WRONG -- TASK HAS DELAY COUNT < 0. Priority: "); 
 	mov	ax, L_yakc_78
 	push	ax
 	call	printString
 	add	sp, 2
-	; >>>>> Line:	306
+	; >>>>> Line:	305
 	; >>>>> printInt(traveser->priority); 
 	mov	si, word [bp-2]
 	add	si, 3
@@ -3349,12 +3340,12 @@ L_yakc_85:
 	push	ax
 	call	printInt
 	add	sp, 2
-	; >>>>> Line:	307
+	; >>>>> Line:	306
 	; >>>>> printNewLine(); 
 	call	printNewLine
 L_yakc_87:
 L_yakc_84:
-	; >>>>> Line:	311
+	; >>>>> Line:	310
 	; >>>>> traveser = traveser->nextTask; 
 	mov	si, word [bp-2]
 	add	si, 4
@@ -3377,47 +3368,47 @@ L_yakc_89:
 	DB	"PROBLEM: Semaphore initialized with negative value!",0
 	ALIGN	2
 YKSemCreate:
-	; >>>>> Line:	317
+	; >>>>> Line:	316
 	; >>>>> YKSEM* YKSemCreate(int initialValue){ 
 	jmp	L_yakc_90
 L_yakc_91:
-	; >>>>> Line:	320
-	; >>>>> if(initialValue  
+	; >>>>> Line:	319
+	; >>>>> if(initialValue < 
 	cmp	word [bp+4], 0
 	jge	L_yakc_92
-	; >>>>> Line:	322
+	; >>>>> Line:	321
 	; >>>>> if(0 == 1){ 
 	jmp	L_yakc_93
-	; >>>>> Line:	323
+	; >>>>> Line:	322
 	; >>>>> printString("PROBLEM: Semaphore initialized with negative value!"); 
 	mov	ax, L_yakc_89
 	push	ax
 	call	printString
 	add	sp, 2
-	; >>>>> Line:	324
+	; >>>>> Line:	323
 	; >>>>> printNewLine(); 
 	call	printNewLine
 L_yakc_93:
-	; >>>>> Line:	326
+	; >>>>> Line:	325
 	; >>>>> return 0; 
 	xor	ax, ax
 	jmp	L_yakc_94
 L_yakc_92:
-	; >>>>> Line:	329
+	; >>>>> Line:	328
 	; >>>>> temp = &SEMArray[SEMIdx]; 
 	mov	ax, word [SEMIdx]
 	shl	ax, 1
 	add	ax, SEMArray
 	mov	word [bp-2], ax
-	; >>>>> Line:	330
+	; >>>>> Line:	329
 	; >>>>> *temp = initialValue; 
 	mov	si, word [bp-2]
 	mov	ax, word [bp+4]
 	mov	word [si], ax
-	; >>>>> Line:	331
+	; >>>>> Line:	330
 	; >>>>> SEMIdx++; 
 	inc	word [SEMIdx]
-	; >>>>> Line:	332
+	; >>>>> Line:	331
 	; >>>>> return temp; 
 	mov	ax, word [bp-2]
 L_yakc_94:
@@ -3431,42 +3422,42 @@ L_yakc_90:
 	jmp	L_yakc_91
 	ALIGN	2
 YKSemPend:
-	; >>>>> Line:	336
+	; >>>>> Line:	335
 	; >>>>> void YKSemPend(YKSEM *semaphore){ 
 	jmp	L_yakc_96
 L_yakc_97:
-	; >>>>> Line:	337
+	; >>>>> Line:	336
 	; >>>>> YKEnterMutex(); 
 	call	YKEnterMutex
-	; >>>>> Line:	338
+	; >>>>> Line:	337
 	; >>>>> if(*semaphore == 0){ 
 	mov	si, word [bp+4]
 	mov	ax, word [si]
 	test	ax, ax
 	jne	L_yakc_98
-	; >>>>> Line:	339
+	; >>>>> Line:	338
 	; >>>>> currentTask->state = 3; 
 	mov	si, word [currentTask]
 	add	si, 2
 	mov	byte [si], 3
-	; >>>>> Line:	340
+	; >>>>> Line:	339
 	; >>>>> currentTask->blocker = semaphore; 
 	mov	si, word [currentTask]
 	add	si, 6
 	mov	ax, word [bp+4]
 	mov	word [si], ax
-	; >>>>> Line:	341
+	; >>>>> Line:	340
 	; >>>>> YKScheduler(1); 
 	mov	al, 1
 	push	ax
 	call	YKScheduler
 	add	sp, 2
 L_yakc_98:
-	; >>>>> Line:	343
+	; >>>>> Line:	342
 	; >>>>> (*semaphore)--; 
 	mov	si, word [bp+4]
 	dec	word [si]
-	; >>>>> Line:	344
+	; >>>>> Line:	343
 	; >>>>> YKExitMutex(); 
 	call	YKExitMutex
 	mov	sp, bp
@@ -3478,54 +3469,54 @@ L_yakc_96:
 	jmp	L_yakc_97
 	ALIGN	2
 YKSemPost:
-	; >>>>> Line:	348
+	; >>>>> Line:	347
 	; >>>>> void YKSemPost(YKSEM *semaphore){ 
 	jmp	L_yakc_100
 L_yakc_101:
-	; >>>>> Line:	353
+	; >>>>> Line:	352
 	; >>>>> YKEnterMutex(); 
 	call	YKEnterMutex
-	; >>>>> Line:	354
+	; >>>>> Line:	353
 	; >>>>> (*semaphore)++; 
 	mov	si, word [bp+4]
 	inc	word [si]
-	; >>>>> Line:	355
-	; >>>>> traveser = tas 
+	; >>>>> Line:	354
+	; >>>>> traveser = task 
 	mov	ax, word [taskhead]
 	mov	word [bp-2], ax
-	; >>>>> Line:	357
+	; >>>>> Line:	356
 	; >>>>> while(traveser){ 
 	jmp	L_yakc_103
 L_yakc_102:
-	; >>>>> Line:	358
+	; >>>>> Line:	357
 	; >>>>> if(traveser->state == 3){ 
 	mov	si, word [bp-2]
 	add	si, 2
 	cmp	byte [si], 3
 	jne	L_yakc_105
-	; >>>>> Line:	361
+	; >>>>> Line:	360
 	; >>>>> if(traveser->blocker == semaphore){ 
 	mov	si, word [bp-2]
 	add	si, 6
 	mov	ax, word [bp+4]
 	cmp	ax, word [si]
 	jne	L_yakc_106
-	; >>>>> Line:	362
+	; >>>>> Line:	361
 	; >>>>> traveser->state = 1; 
 	mov	si, word [bp-2]
 	add	si, 2
 	mov	byte [si], 1
-	; >>>>> Line:	363
+	; >>>>> Line:	362
 	; >>>>> traveser->blocker = 0; 
 	mov	si, word [bp-2]
 	add	si, 6
 	mov	word [si], 0
-	; >>>>> Line:	364
+	; >>>>> Line:	363
 	; >>>>> break; 
 	jmp	L_yakc_104
 L_yakc_106:
 L_yakc_105:
-	; >>>>> Line:	367
+	; >>>>> Line:	366
 	; >>>>> traveser = traveser->nextTask; 
 	mov	si, word [bp-2]
 	add	si, 4
@@ -3536,19 +3527,19 @@ L_yakc_103:
 	test	ax, ax
 	jne	L_yakc_102
 L_yakc_104:
-	; >>>>> Line:	370
+	; >>>>> Line:	369
 	; >>>>> if (YKISRDepth == 0) { 
 	mov	ax, word [YKISRDepth]
 	test	ax, ax
 	jne	L_yakc_107
-	; >>>>> Line:	371
+	; >>>>> Line:	370
 	; >>>>> YKScheduler(1); 
 	mov	al, 1
 	push	ax
 	call	YKScheduler
 	add	sp, 2
 L_yakc_107:
-	; >>>>> Line:	373
+	; >>>>> Line:	372
 	; >>>>> YKExitMutex(); 
 	call	YKExitMutex
 	mov	sp, bp
@@ -3561,11 +3552,11 @@ L_yakc_100:
 	jmp	L_yakc_101
 	ALIGN	2
 YKQCreate:
-	; >>>>> Line:	379
+	; >>>>> Line:	378
 	; >>>>> YKQ *YKQCreate(void **start, unsigned size) { 
 	jmp	L_yakc_109
 L_yakc_110:
-	; >>>>> Line:	380
+	; >>>>> Line:	379
 	; >>>>> YKQArray[YKQIdx].length = size; 
 	mov	ax, word [YKQIdx]
 	mov	cx, 10
@@ -3575,7 +3566,7 @@ L_yakc_110:
 	add	si, 2
 	mov	ax, word [bp+6]
 	mov	word [si], ax
-	; >>>>> Line:	381
+	; >>>>> Line:	380
 	; >>>>> YKQArray[YKQIdx].queueAddress = start; 
 	mov	ax, word [YKQIdx]
 	mov	cx, 10
@@ -3584,7 +3575,7 @@ L_yakc_110:
 	add	si, YKQArray
 	mov	ax, word [bp+4]
 	mov	word [si], ax
-	; >>>>> Line:	382
+	; >>>>> Line:	381
 	; >>>>> YKQArray[YKQIdx].nextEmpty = start; 
 	mov	ax, word [YKQIdx]
 	mov	cx, 10
@@ -3594,7 +3585,7 @@ L_yakc_110:
 	add	si, 4
 	mov	ax, word [bp+4]
 	mov	word [si], ax
-	; >>>>> Line:	383
+	; >>>>> Line:	382
 	; >>>>> YKQArray[YKQIdx].nextRemove = start; 
 	mov	ax, word [YKQIdx]
 	mov	cx, 10
@@ -3604,7 +3595,7 @@ L_yakc_110:
 	add	si, 6
 	mov	ax, word [bp+4]
 	mov	word [si], ax
-	; >>>>> Line:	384
+	; >>>>> Line:	383
 	; >>>>> YKQArray[YKQIdx].state = 0; 
 	mov	ax, word [YKQIdx]
 	mov	cx, 10
@@ -3613,10 +3604,10 @@ L_yakc_110:
 	mov	si, ax
 	add	si, 8
 	mov	word [si], 0
-	; >>>>> Line:	386
+	; >>>>> Line:	385
 	; >>>>> YKQIdx++; 
 	inc	word [YKQIdx]
-	; >>>>> Line:	388
+	; >>>>> Line:	387
 	; >>>>>  
 	mov	ax, word [YKQIdx]
 	dec	ax
@@ -3637,37 +3628,37 @@ L_yakc_113:
 	DB	"YKQ STRUCT: ",0
 	ALIGN	2
 debugQueue:
-	; >>>>> Line:	392
+	; >>>>> Line:	391
 	; >>>>> void debugQueue(YKQ *queue){ 
 	jmp	L_yakc_115
 L_yakc_116:
-	; >>>>> Line:	393
+	; >>>>> Line:	392
 	; >>>>> printString("YKQ STRUCT: "); 
 	mov	ax, L_yakc_113
 	push	ax
 	call	printString
 	add	sp, 2
-	; >>>>> Line:	394
+	; >>>>> Line:	393
 	; >>>>> printWord((int) queue->nextEmpty); 
 	mov	si, word [bp+4]
 	add	si, 4
 	push	word [si]
 	call	printWord
 	add	sp, 2
-	; >>>>> Line:	395
+	; >>>>> Line:	394
 	; >>>>> printString(", "); 
 	mov	ax, L_yakc_114
 	push	ax
 	call	printString
 	add	sp, 2
-	; >>>>> Line:	396
+	; >>>>> Line:	395
 	; >>>>> printWord((int) queue->nextRemove); 
 	mov	si, word [bp+4]
 	add	si, 6
 	push	word [si]
 	call	printWord
 	add	sp, 2
-	; >>>>> Line:	397
+	; >>>>> Line:	396
 	; >>>>> printNewLine(); 
 	call	printNewLine
 	mov	sp, bp
@@ -3679,51 +3670,51 @@ L_yakc_115:
 	jmp	L_yakc_116
 	ALIGN	2
 YKQPend:
-	; >>>>> Line:	400
+	; >>>>> Line:	399
 	; >>>>> void *YKQPend(YKQ *queue) { 
 	jmp	L_yakc_118
 L_yakc_119:
-	; >>>>> Line:	403
+	; >>>>> Line:	402
 	; >>>>> YKEnterMutex(); 
 	call	YKEnterMutex
-	; >>>>> Line:	404
+	; >>>>> Line:	403
 	; >>>>> if(queue->state == 0){ 
 	mov	si, word [bp+4]
 	add	si, 8
 	mov	ax, word [si]
 	test	ax, ax
 	jne	L_yakc_120
-	; >>>>> Line:	405
+	; >>>>> Line:	404
 	; >>>>> currentTask->state = 4; 
 	mov	si, word [currentTask]
 	add	si, 2
 	mov	byte [si], 4
-	; >>>>> Line:	406
+	; >>>>> Line:	405
 	; >>>>> currentTask->qblocker = queue; 
 	mov	si, word [currentTask]
 	add	si, 8
 	mov	ax, word [bp+4]
 	mov	word [si], ax
-	; >>>>> Line:	407
+	; >>>>> Line:	406
 	; >>>>> YKScheduler(1); 
 	mov	al, 1
 	push	ax
 	call	YKScheduler
 	add	sp, 2
 L_yakc_120:
-	; >>>>> Line:	409
+	; >>>>> Line:	408
 	; >>>>> tempmsg = (void *) *queue->nextRemove; 
 	mov	si, word [bp+4]
 	add	si, 6
 	mov	si, word [si]
 	mov	ax, word [si]
 	mov	word [bp-2], ax
-	; >>>>> Line:	411
+	; >>>>> Line:	410
 	; >>>>> queue->nextRemove++; 
 	mov	si, word [bp+4]
 	add	si, 6
 	add	word [si], 2
-	; >>>>> Line:	412
+	; >>>>> Line:	411
 	; >>>>> if(queue->nextRemove == queue->queueAddress + queue->length){ 
 	mov	si, word [bp+4]
 	add	si, 2
@@ -3735,28 +3726,28 @@ L_yakc_120:
 	mov	dx, word [si]
 	cmp	dx, ax
 	jne	L_yakc_121
-	; >>>>> Line:	413
-	; >>>>> ess; 
+	; >>>>> Line:	412
+	; >>>>> ress; 
 	mov	si, word [bp+4]
 	mov	di, word [bp+4]
 	add	di, 6
 	mov	ax, word [si]
 	mov	word [di], ax
 L_yakc_121:
-	; >>>>> Line:	417
+	; >>>>> Line:	416
 	; >>>>> if(queue->state == 1){ 
 	mov	si, word [bp+4]
 	add	si, 8
 	cmp	word [si], 1
 	jne	L_yakc_122
-	; >>>>> Line:	418
+	; >>>>> Line:	417
 	; >>>>> queue->state = 2; 
 	mov	si, word [bp+4]
 	add	si, 8
 	mov	word [si], 2
 	jmp	L_yakc_123
 L_yakc_122:
-	; >>>>> Line:	419
+	; >>>>> Line:	418
 	; >>>>> }else if(queue->nextRemove == queue->nextEmpty){ 
 	mov	si, word [bp+4]
 	add	si, 6
@@ -3765,26 +3756,26 @@ L_yakc_122:
 	mov	ax, word [di]
 	cmp	ax, word [si]
 	jne	L_yakc_124
-	; >>>>> Line:	420
+	; >>>>> Line:	419
 	; >>>>> queue->state = 0; 
 	mov	si, word [bp+4]
 	add	si, 8
 	mov	word [si], 0
 L_yakc_124:
 L_yakc_123:
-	; >>>>> Line:	422
+	; >>>>> Line:	421
 	; >>>>> if(0) debugQueue(queue); 
 	jmp	L_yakc_125
-	; >>>>> Line:	422
+	; >>>>> Line:	421
 	; >>>>> if(0) debugQueue(queue); 
 	push	word [bp+4]
 	call	debugQueue
 	add	sp, 2
 L_yakc_125:
-	; >>>>> Line:	423
+	; >>>>> Line:	422
 	; >>>>> YKExitMutex(); 
 	call	YKExitMutex
-	; >>>>> Line:	424
+	; >>>>> Line:	423
 	; >>>>> return tempmsg; 
 	mov	ax, word [bp-2]
 L_yakc_126:
@@ -3798,37 +3789,37 @@ L_yakc_118:
 	jmp	L_yakc_119
 	ALIGN	2
 YKQPost:
-	; >>>>> Line:	427
+	; >>>>> Line:	426
 	; >>>>> int YKQPost(YKQ *queue, void *msg) { 
 	jmp	L_yakc_128
 L_yakc_129:
-	; >>>>> Line:	429
+	; >>>>> Line:	428
 	; >>>>> YKEnterMutex(); 
 	call	YKEnterMutex
-	; >>>>> Line:	431
+	; >>>>> Line:	430
 	; >>>>> if(queue->state == 1){ 
 	mov	si, word [bp+4]
 	add	si, 8
 	cmp	word [si], 1
 	jne	L_yakc_130
-	; >>>>> Line:	432
+	; >>>>> Line:	431
 	; >>>>> return 0; 
 	xor	ax, ax
 	jmp	L_yakc_131
 L_yakc_130:
-	; >>>>> Line:	434
+	; >>>>> Line:	433
 	; >>>>> *queue->nextEmpty = msg; 
 	mov	si, word [bp+4]
 	add	si, 4
 	mov	si, word [si]
 	mov	ax, word [bp+6]
 	mov	word [si], ax
-	; >>>>> Line:	435
+	; >>>>> Line:	434
 	; >>>>> queue->nextEmpty++; 
 	mov	si, word [bp+4]
 	add	si, 4
 	add	word [si], 2
-	; >>>>> Line:	436
+	; >>>>> Line:	435
 	; >>>>> if(queue->nextEmpty == queue->queueAddress + queue->length){ 
 	mov	si, word [bp+4]
 	add	si, 2
@@ -3840,7 +3831,7 @@ L_yakc_130:
 	mov	dx, word [si]
 	cmp	dx, ax
 	jne	L_yakc_132
-	; >>>>> Line:	437
+	; >>>>> Line:	436
 	; >>>>> queue->nextEmpty = queue->queueAddress; 
 	mov	si, word [bp+4]
 	mov	di, word [bp+4]
@@ -3848,21 +3839,21 @@ L_yakc_130:
 	mov	ax, word [si]
 	mov	word [di], ax
 L_yakc_132:
-	; >>>>> Line:	440
+	; >>>>> Line:	439
 	; >>>>> if(queue->state == 0){ 
 	mov	si, word [bp+4]
 	add	si, 8
 	mov	ax, word [si]
 	test	ax, ax
 	jne	L_yakc_133
-	; >>>>> Line:	441
+	; >>>>> Line:	440
 	; >>>>> queue->state = 2; 
 	mov	si, word [bp+4]
 	add	si, 8
 	mov	word [si], 2
 	jmp	L_yakc_134
 L_yakc_133:
-	; >>>>> Line:	442
+	; >>>>> Line:	441
 	; >>>>> }else if(queue->nextRemove == queue->nextEmpty){ 
 	mov	si, word [bp+4]
 	add	si, 6
@@ -3871,59 +3862,59 @@ L_yakc_133:
 	mov	ax, word [di]
 	cmp	ax, word [si]
 	jne	L_yakc_135
-	; >>>>> Line:	443
+	; >>>>> Line:	442
 	; >>>>> queue->state = 1; 
 	mov	si, word [bp+4]
 	add	si, 8
 	mov	word [si], 1
 L_yakc_135:
 L_yakc_134:
-	; >>>>> Line:	445
+	; >>>>> Line:	444
 	; >>>>> if(0) debugQueue(queue); 
 	jmp	L_yakc_136
-	; >>>>> Line:	445
+	; >>>>> Line:	444
 	; >>>>> if(0) debugQueue(queue); 
 	push	word [bp+4]
 	call	debugQueue
 	add	sp, 2
 L_yakc_136:
-	; >>>>> Line:	447
+	; >>>>> Line:	446
 	; >>>>> traveser = taskhead; 
 	mov	ax, word [taskhead]
 	mov	word [bp-2], ax
-	; >>>>> Line:	449
+	; >>>>> Line:	448
 	; >>>>> while(traveser){ 
 	jmp	L_yakc_138
 L_yakc_137:
-	; >>>>> Line:	450
+	; >>>>> Line:	449
 	; >>>>> if(traveser->state == 4){ 
 	mov	si, word [bp-2]
 	add	si, 2
 	cmp	byte [si], 4
 	jne	L_yakc_140
-	; >>>>> Line:	453
+	; >>>>> Line:	452
 	; >>>>> if(traveser->qblocker == queue){ 
 	mov	si, word [bp-2]
 	add	si, 8
 	mov	ax, word [bp+4]
 	cmp	ax, word [si]
 	jne	L_yakc_141
-	; >>>>> Line:	454
+	; >>>>> Line:	453
 	; >>>>> traveser->state = 1; 
 	mov	si, word [bp-2]
 	add	si, 2
 	mov	byte [si], 1
-	; >>>>> Line:	455
+	; >>>>> Line:	454
 	; >>>>> traveser->qblocker = 0; 
 	mov	si, word [bp-2]
 	add	si, 8
 	mov	word [si], 0
-	; >>>>> Line:	456
+	; >>>>> Line:	455
 	; >>>>> break; 
 	jmp	L_yakc_139
 L_yakc_141:
 L_yakc_140:
-	; >>>>> Line:	459
+	; >>>>> Line:	458
 	; >>>>> traveser = traveser->nextTask; 
 	mov	si, word [bp-2]
 	add	si, 4
@@ -3934,22 +3925,22 @@ L_yakc_138:
 	test	ax, ax
 	jne	L_yakc_137
 L_yakc_139:
-	; >>>>> Line:	462
+	; >>>>> Line:	461
 	; >>>>> if (YKISRDepth == 0) { 
 	mov	ax, word [YKISRDepth]
 	test	ax, ax
 	jne	L_yakc_142
-	; >>>>> Line:	463
+	; >>>>> Line:	462
 	; >>>>> YKScheduler(1); 
 	mov	al, 1
 	push	ax
 	call	YKScheduler
 	add	sp, 2
 L_yakc_142:
-	; >>>>> Line:	466
+	; >>>>> Line:	465
 	; >>>>> YKExitMutex(); 
 	call	YKExitMutex
-	; >>>>> Line:	468
+	; >>>>> Line:	467
 	; >>>>> return 1; 
 	mov	ax, 1
 L_yakc_131:
@@ -3963,22 +3954,22 @@ L_yakc_128:
 	jmp	L_yakc_129
 	ALIGN	2
 YKEventCreate:
-	; >>>>> Line:	473
+	; >>>>> Line:	472
 	; >>>>> YKEVENT *YKEventCreate(unsigned initialValue) { 
 	jmp	L_yakc_144
 L_yakc_145:
-	; >>>>> Line:	474
-	; >>>>> vent->value){ 
+	; >>>>> Line:	473
+	; >>>>> YKEArray[ 
 	mov	ax, word [YKEIdx]
 	shl	ax, 1
 	mov	si, ax
 	add	si, YKEArray
 	mov	ax, word [bp+4]
 	mov	word [si], ax
-	; >>>>> Line:	476
+	; >>>>> Line:	475
 	; >>>>> YKEIdx++; 
 	inc	word [YKEIdx]
-	; >>>>> Line:	478
+	; >>>>> Line:	477
 	; >>>>> return &YKEArray[YKEIdx-1]; 
 	mov	ax, word [YKEIdx]
 	dec	ax
@@ -3994,52 +3985,52 @@ L_yakc_144:
 	jmp	L_yakc_145
 	ALIGN	2
 YKEventPend:
-	; >>>>> Line:	481
+	; >>>>> Line:	480
 	; >>>>> unsigned YKEventPend(YKEVENT *event, unsigned eventMask, int waitMode) { 
 	jmp	L_yakc_148
 L_yakc_149:
-	; >>>>> Line:	483
+	; >>>>> Line:	482
 	; >>>>> YKEnterMutex(); 
 	call	YKEnterMutex
-	; >>>>> Line:	484
+	; >>>>> Line:	483
 	; >>>>> if(waitMode == 1){ 
 	cmp	word [bp+8], 1
 	jne	L_yakc_150
-	; >>>>> Line:	485
+	; >>>>> Line:	484
 	; >>>>> if(eventMask == event->value){ 
 	mov	si, word [bp+4]
 	mov	ax, word [si]
 	cmp	ax, word [bp+6]
 	jne	L_yakc_151
-	; >>>>> Line:	486
+	; >>>>> Line:	485
 	; >>>>> return event->value; 
 	jmp	L_yakc_152
 	jmp	L_yakc_153
 L_yakc_151:
-	; >>>>> Line:	488
+	; >>>>> Line:	487
 	; >>>>> currentTask->state = 5; 
 	mov	si, word [currentTask]
 	add	si, 2
 	mov	byte [si], 5
-	; >>>>> Line:	489
+	; >>>>> Line:	488
 	; >>>>> currentTask->eblocker = event; 
 	mov	si, word [currentTask]
 	add	si, 10
 	mov	ax, word [bp+4]
 	mov	word [si], ax
-	; >>>>> Line:	490
+	; >>>>> Line:	489
 	; >>>>> currentTask->eventMask = eventMask; 
 	mov	si, word [currentTask]
 	add	si, 12
 	mov	ax, word [bp+6]
 	mov	word [si], ax
-	; >>>>> Line:	491
+	; >>>>> Line:	490
 	; >>>>> currentTask->waitMode = waitMode; 
 	mov	si, word [currentTask]
 	add	si, 14
 	mov	ax, word [bp+8]
 	mov	word [si], ax
-	; >>>>> Line:	492
+	; >>>>> Line:	491
 	; >>>>> YKScheduler(1); 
 	mov	al, 1
 	push	ax
@@ -4048,42 +4039,42 @@ L_yakc_151:
 L_yakc_153:
 	jmp	L_yakc_154
 L_yakc_150:
-	; >>>>> Line:	497
+	; >>>>> Line:	496
 	; >>>>> if(eventMask & event->value){ 
 	mov	ax, word [bp+6]
 	mov	si, word [bp+4]
 	and	ax, word [si]
 	je	L_yakc_155
-	; >>>>> Line:	498
-	; >>>>>  
+	; >>>>> Line:	497
+	; >>>>> ocke 
 	mov	ax, word [si]
 	jmp	L_yakc_152
 	jmp	L_yakc_156
 L_yakc_155:
-	; >>>>> Line:	500
+	; >>>>> Line:	499
 	; >>>>> currentTask->state = 5; 
 	mov	si, word [currentTask]
 	add	si, 2
 	mov	byte [si], 5
-	; >>>>> Line:	501
+	; >>>>> Line:	500
 	; >>>>> currentTask->eblocker = event; 
 	mov	si, word [currentTask]
 	add	si, 10
 	mov	ax, word [bp+4]
 	mov	word [si], ax
-	; >>>>> Line:	502
+	; >>>>> Line:	501
 	; >>>>> currentTask->eventMask = eventMask; 
 	mov	si, word [currentTask]
 	add	si, 12
 	mov	ax, word [bp+6]
 	mov	word [si], ax
-	; >>>>> Line:	503
+	; >>>>> Line:	502
 	; >>>>> currentTask->waitMode = waitMode; 
 	mov	si, word [currentTask]
 	add	si, 14
 	mov	ax, word [bp+8]
 	mov	word [si], ax
-	; >>>>> Line:	504
+	; >>>>> Line:	503
 	; >>>>> YKScheduler(1); 
 	mov	al, 1
 	push	ax
@@ -4091,10 +4082,10 @@ L_yakc_155:
 	add	sp, 2
 L_yakc_156:
 L_yakc_154:
-	; >>>>> Line:	508
+	; >>>>> Line:	507
 	; >>>>> YKExitMutex(); 
 	call	YKExitMutex
-	; >>>>> Line:	509
+	; >>>>> Line:	508
 	; >>>>> return event->value; 
 	mov	si, word [bp+4]
 	mov	ax, word [si]
@@ -4108,47 +4099,47 @@ L_yakc_148:
 	jmp	L_yakc_149
 	ALIGN	2
 YKEventSet:
-	; >>>>> Line:	512
+	; >>>>> Line:	511
 	; >>>>> void YKEventSet(YKEVENT *event, unsigned eventMask) { 
 	jmp	L_yakc_158
 L_yakc_159:
-	; >>>>> Line:	515
+	; >>>>> Line:	514
 	; >>>>> event->value = event->value | eventMask; 
 	mov	si, word [bp+4]
 	mov	ax, word [si]
 	or	ax, word [bp+6]
 	mov	word [si], ax
-	; >>>>> Line:	517
+	; >>>>> Line:	516
 	; >>>>> YKEnterMutex(); 
 	call	YKEnterMutex
-	; >>>>> Line:	519
+	; >>>>> Line:	518
 	; >>>>> traveser = taskhead; 
 	mov	ax, word [taskhead]
 	mov	word [bp-2], ax
-	; >>>>> Line:	521
+	; >>>>> Line:	520
 	; >>>>> while(traveser){ 
 	jmp	L_yakc_161
 L_yakc_160:
-	; >>>>> Line:	522
+	; >>>>> Line:	521
 	; >>>>> if(traveser->state == 5){ 
 	mov	si, word [bp-2]
 	add	si, 2
 	cmp	byte [si], 5
 	jne	L_yakc_163
-	; >>>>> Line:	525
-	; >>>>> if(traveser->eblock 
+	; >>>>> Line:	524
+	; >>>>> if(traveser->eblocke 
 	mov	si, word [bp-2]
 	add	si, 10
 	mov	ax, word [bp+4]
 	cmp	ax, word [si]
 	jne	L_yakc_164
-	; >>>>> Line:	526
+	; >>>>> Line:	525
 	; >>>>> if(traveser->waitMode == 1){ 
 	mov	si, word [bp-2]
 	add	si, 14
 	cmp	word [si], 1
 	jne	L_yakc_165
-	; >>>>> Line:	527
+	; >>>>> Line:	526
 	; >>>>> if(traveser->eventMask == event->value){ 
 	mov	si, word [bp-2]
 	add	si, 12
@@ -4156,22 +4147,22 @@ L_yakc_160:
 	mov	ax, word [di]
 	cmp	ax, word [si]
 	jne	L_yakc_166
-	; >>>>> Line:	528
+	; >>>>> Line:	527
 	; >>>>> traveser->state = 1; 
 	mov	si, word [bp-2]
 	add	si, 2
 	mov	byte [si], 1
-	; >>>>> Line:	529
+	; >>>>> Line:	528
 	; >>>>> traveser->eblocker = 0; 
 	mov	si, word [bp-2]
 	add	si, 10
 	mov	word [si], 0
-	; >>>>> Line:	530
+	; >>>>> Line:	529
 	; >>>>> traveser->eventMask = 0; 
 	mov	si, word [bp-2]
 	add	si, 12
 	mov	word [si], 0
-	; >>>>> Line:	531
+	; >>>>> Line:	530
 	; >>>>> traveser->waitMode = 0; 
 	mov	si, word [bp-2]
 	add	si, 14
@@ -4179,7 +4170,7 @@ L_yakc_160:
 L_yakc_166:
 	jmp	L_yakc_167
 L_yakc_165:
-	; >>>>> Line:	536
+	; >>>>> Line:	535
 	; >>>>> if(traveser->eventMask & event->value){ 
 	mov	si, word [bp-2]
 	add	si, 12
@@ -4187,22 +4178,22 @@ L_yakc_165:
 	mov	si, word [bp+4]
 	and	ax, word [si]
 	je	L_yakc_168
-	; >>>>> Line:	537
+	; >>>>> Line:	536
 	; >>>>> traveser->state = 1; 
 	mov	si, word [bp-2]
 	add	si, 2
 	mov	byte [si], 1
-	; >>>>> Line:	538
+	; >>>>> Line:	537
 	; >>>>> traveser->eblocker = 0; 
 	mov	si, word [bp-2]
 	add	si, 10
 	mov	word [si], 0
-	; >>>>> Line:	539
+	; >>>>> Line:	538
 	; >>>>> traveser->eventMask = 0; 
 	mov	si, word [bp-2]
 	add	si, 12
 	mov	word [si], 0
-	; >>>>> Line:	540
+	; >>>>> Line:	539
 	; >>>>> traveser->waitMode = 0; 
 	mov	si, word [bp-2]
 	add	si, 14
@@ -4211,7 +4202,7 @@ L_yakc_168:
 L_yakc_167:
 L_yakc_164:
 L_yakc_163:
-	; >>>>> Line:	545
+	; >>>>> Line:	544
 	; >>>>> traveser = traveser->nextTask; 
 	mov	si, word [bp-2]
 	add	si, 4
@@ -4222,19 +4213,19 @@ L_yakc_161:
 	test	ax, ax
 	jne	L_yakc_160
 L_yakc_162:
-	; >>>>> Line:	548
+	; >>>>> Line:	547
 	; >>>>> if (YKISRDepth == 0) { 
 	mov	ax, word [YKISRDepth]
 	test	ax, ax
 	jne	L_yakc_169
-	; >>>>> Line:	549
+	; >>>>> Line:	548
 	; >>>>> YKScheduler(1); 
 	mov	al, 1
 	push	ax
 	call	YKScheduler
 	add	sp, 2
 L_yakc_169:
-	; >>>>> Line:	551
+	; >>>>> Line:	550
 	; >>>>> YKExitMutex(); 
 	call	YKExitMutex
 	mov	sp, bp
@@ -4247,11 +4238,11 @@ L_yakc_158:
 	jmp	L_yakc_159
 	ALIGN	2
 YKEventReset:
-	; >>>>> Line:	554
+	; >>>>> Line:	553
 	; >>>>> void YKEventReset(YKEVENT *event, unsigned eventMask) { 
 	jmp	L_yakc_171
 L_yakc_172:
-	; >>>>> Line:	555
+	; >>>>> Line:	554
 	; >>>>> event->value = event->value & (~eventMask); 
 	mov	ax, word [bp+6]
 	not	ax

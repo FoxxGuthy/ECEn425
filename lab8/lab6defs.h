@@ -4,7 +4,7 @@ Revision date: 4 November
 Description: Required definitions for EE 425 lab 6 (Message queues)
 */
 
-#define MSGARRAYSIZE      80
+#define MSGARRAYSIZE      160
 
 struct msg
 {

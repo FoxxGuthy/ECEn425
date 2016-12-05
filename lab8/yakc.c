@@ -243,7 +243,6 @@ void YKScheduler(char saveCTX){
 		YKDispatcher(saveCTX);
 		//YKExitMutex(); // Causes fatal crash on lab4d --> Need to look into
 	}
-
 }
 
 void YKDelayTask(unsigned newDelayCount) {
