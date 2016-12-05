@@ -21,6 +21,8 @@ Description: Application code for EE 425 lab 6 (Message queues)
 #define CORNER 1
 #define STRAIGHT 1
 
+#define DEBUG 0
+
 
 struct msg MsgArray[MSGARRAYSIZE];  /* buffers for message content */
 int nextMsg = 0;
@@ -36,6 +38,7 @@ YKQ *MsgQPtr;                   /* actual name of queue */
 
 YKSEM *RCSemPtr;                        /* YKSEM must be defined in yakk.h */
 YKSEM *NPSemPtr;
+YKSEM *TDSemPtr;
 
 extern unsigned NewPieceType;
 extern unsigned NewPieceOrientation;
@@ -53,11 +56,13 @@ void addToQueue(int pieceID, int cmd, int direction){
   MsgArray[nextMsg].pieceID = pieceID;
   MsgArray[nextMsg].cmd = cmd;
   MsgArray[nextMsg].direction = direction;
-  printString("ATQ: CMD:");
-  printInt(cmd);
-  printString(" DIR:");
-  printInt(direction);
-  printNewLine();
+  if(DEBUG==1){
+    printString("ATQ: CMD:");
+    printInt(cmd);
+    printString(" DIR:");
+    printInt(direction);
+    printNewLine();
+  }
 
   if (YKQPost(MsgQPtr, (void *) &(MsgArray[nextMsg])) == 0)
 			printString("  addToQ: queue overflow! \n");
@@ -125,11 +130,13 @@ while (1)
   {
   YKSemPend(RCSemPtr);
   tmp = (struct msg *) YKQPend(MsgQPtr); /* get next msg */
-  printString("C: ");
-  printInt(tmp->cmd);
-  printString(" D: ");
-  printInt(tmp->direction);
-  printNewLine();
+  if(DEBUG==1){
+    printString("C: ");
+    printInt(tmp->cmd);
+    printString(" D: ");
+    printInt(tmp->direction);
+    printNewLine();
+  }
     if(tmp->cmd == SLIDE){
       SlidePiece(tmp->pieceID, tmp->direction);
     }else{
@@ -165,20 +172,25 @@ void NewPieceTask(void)
 
   while(1){
     YKSemPend(NPSemPtr);
-    printString("NP NPTSK \r\n");
+    if(DEBUG==1){
+      printString("NP NPTSK \r\n");
+    }
+    YKSemPend(TDSemPtr);
     col0Level = getFirstOne(ScreenBitMap0);
     col1Level = getFirstOne(ScreenBitMap1);
     col2Level = getFirstOne(ScreenBitMap2);
     col3Level = getFirstOne(ScreenBitMap3);
     col4Level = getFirstOne(ScreenBitMap4);
     col5Level = getFirstOne(ScreenBitMap5);
-    printInt(col0Level);
-    printInt(col1Level);
-    printInt(col2Level);
-    printInt(col3Level);
-    printInt(col4Level);
-    printInt(col5Level);
-    printNewLine();
+    if(DEBUG==1){
+      printInt(col0Level);
+      printInt(col1Level);
+      printInt(col2Level);
+      printInt(col3Level);
+      printInt(col4Level);
+      printInt(col5Level);
+      printNewLine();
+    }
     if((col0Level == col1Level) && (col1Level==col2Level)){
       bin0 = FLAT;
     }else{
@@ -189,17 +201,20 @@ void NewPieceTask(void)
     }else{
       bin1 = CORNER;
     }
-    printString("B0:");
-    printInt(bin0);
-    printString(" B1:");
-    printInt(bin1);
-    printNewLine();
-
+    if(DEBUG==1){
+      printString("B0:");
+      printInt(bin0);
+      printString(" B1:");
+      printInt(bin1);
+      printNewLine();
+    }
     //Let's Just get the piece off the wall for now
     if(NewPieceColumn==0){
       setColumn(1);
+      NewPieceColumn = 1;
     }else if(NewPieceColumn==5){
       setColumn(4);
+      NewPieceColumn = 4;
     }
 
     if(NewPieceType==STRAIGHT){
@@ -207,11 +222,19 @@ void NewPieceTask(void)
       if(NewPieceOrientation==1){ // if the piece is vertical
         addToQueue(NewPieceID, ROTATE, CW);
       }
-      if(bin0==FLAT){
-        setColumn(1);
-      }
-      if(bin1==FLAT){
-        setColumn(4);
+      if(bin0==FLAT && bin1==FLAT){
+        if(col0Level < col5Level){
+          setColumn(1);
+        }else{
+          setColumn(4);
+
+        }
+      }else{
+        if(bin0==FLAT){
+          setColumn(1);
+        }else{
+          setColumn(4);
+        }
       }
 
 
@@ -224,13 +247,12 @@ void NewPieceTask(void)
           setOrientation(1);
           setColumn(5);
         }
-      }
-      if(bin0 != FLAT){
+      }else if(bin0 != FLAT){
         setOrientation(2);
-        setColumn(1);
+        setColumn(2);
       }else{
         setOrientation(3);
-        setColumn(4);
+        setColumn(3);
       }
     }
   }
@@ -287,6 +309,8 @@ int main(void)
 
   NPSemPtr = YKSemCreate(0);
   RCSemPtr = YKSemCreate(1);
+  TDSemPtr = YKSemCreate(1);
+
 
   YKRun();
 

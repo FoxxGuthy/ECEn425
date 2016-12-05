@@ -4,11 +4,11 @@
 	jmp	main	; Jump to program start
 	ALIGN	2
 gameOverISRC:
-	; >>>>> Line:	11
+	; >>>>> Line:	12
 	; >>>>> void gameOverISRC(void) { 
 	jmp	L_simptris_inth_1
 L_simptris_inth_2:
-	; >>>>> Line:	12
+	; >>>>> Line:	13
 	; >>>>> exit(0); 
 	xor	al, al
 	push	ax
@@ -21,21 +21,13 @@ L_simptris_inth_1:
 	push	bp
 	mov	bp, sp
 	jmp	L_simptris_inth_2
-L_simptris_inth_4:
-	DB	"NP ISRC ",0xD,0xA,0
 	ALIGN	2
 newPieceISRC:
-	; >>>>> Line:	15
-	; >>>>> void newPieceISRC(void) { 
-	jmp	L_simptris_inth_5
-L_simptris_inth_6:
 	; >>>>> Line:	16
-	; >>>>> printString("NP ISRC \r\n"); 
-	mov	ax, L_simptris_inth_4
-	push	ax
-	call	printString
-	add	sp, 2
-	; >>>>> Line:	17
+	; >>>>> void newPieceISRC(void) { 
+	jmp	L_simptris_inth_4
+L_simptris_inth_5:
+	; >>>>> Line:	18
 	; >>>>> YKSemPost(NPSemPtr); 
 	push	word [NPSemPtr]
 	call	YKSemPost
@@ -43,17 +35,17 @@ L_simptris_inth_6:
 	mov	sp, bp
 	pop	bp
 	ret
-L_simptris_inth_5:
+L_simptris_inth_4:
 	push	bp
 	mov	bp, sp
-	jmp	L_simptris_inth_6
+	jmp	L_simptris_inth_5
 	ALIGN	2
 receivedCommandISRC:
-	; >>>>> Line:	20
-	; >>>>> void receivedCommandISRC(void) { 
-	jmp	L_simptris_inth_8
-L_simptris_inth_9:
 	; >>>>> Line:	21
+	; >>>>> void receivedCommandISRC(void) { 
+	jmp	L_simptris_inth_7
+L_simptris_inth_8:
+	; >>>>> Line:	22
 	; >>>>> YKSemPost(RCSemPtr); 
 	push	word [RCSemPtr]
 	call	YKSemPost
@@ -61,37 +53,40 @@ L_simptris_inth_9:
 	mov	sp, bp
 	pop	bp
 	ret
-L_simptris_inth_8:
+L_simptris_inth_7:
 	push	bp
 	mov	bp, sp
-	jmp	L_simptris_inth_9
+	jmp	L_simptris_inth_8
 	ALIGN	2
 touchdownISRC:
-	; >>>>> Line:	24
+	; >>>>> Line:	25
 	; >>>>> void touchdownISRC(void) { 
-	jmp	L_simptris_inth_11
-L_simptris_inth_12:
+	jmp	L_simptris_inth_10
+L_simptris_inth_11:
 	; >>>>> Line:	26
-	; >>>>> } 
+	; >>>>> YKSemPost(TDS 
+	push	word [TDSemPtr]
+	call	YKSemPost
+	add	sp, 2
 	mov	sp, bp
 	pop	bp
 	ret
-L_simptris_inth_11:
+L_simptris_inth_10:
 	push	bp
 	mov	bp, sp
-	jmp	L_simptris_inth_12
+	jmp	L_simptris_inth_11
 	ALIGN	2
 lineclearISRC:
-	; >>>>> Line:	28
-	; >>>>> vo 
-	jmp	L_simptris_inth_14
-L_simptris_inth_15:
 	; >>>>> Line:	30
+	; >>>>> void lineclearISRC(void) { 
+	jmp	L_simptris_inth_13
+L_simptris_inth_14:
+	; >>>>> Line:	32
 	; >>>>> } 
 	mov	sp, bp
 	pop	bp
 	ret
-L_simptris_inth_14:
+L_simptris_inth_13:
 	push	bp
 	mov	bp, sp
-	jmp	L_simptris_inth_15
+	jmp	L_simptris_inth_14

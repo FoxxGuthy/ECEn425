@@ -124,12 +124,13 @@ void YKEventReset(YKEVENT *event, unsigned eventMask);
 
 extern YKSEM *NPSemPtr;
 extern YKSEM *RCSemPtr;
+extern YKSEM *TDSemPtr;
  void gameOverISRC(void) {
     exit(0);
  }
 
  void newPieceISRC(void) {
-    printString("NP ISRC \r\n");
+
     YKSemPost(NPSemPtr);
  }
 
@@ -138,6 +139,7 @@ extern YKSEM *RCSemPtr;
  }
 
  void touchdownISRC(void) {
+   YKSemPost(TDSemPtr);
 
  }
 
