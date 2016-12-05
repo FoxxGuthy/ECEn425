@@ -10,7 +10,7 @@ Description: Application code for EE 425 lab 6 (Message queues)
 #include "simptris.h"
 
 #define TASK_STACK_SIZE   512       /* stack size in words */
-#define MSGQSIZE          10
+#define MSGQSIZE          40
 #define SLIDE 0
 #define ROTATE 1
 #define LEFT 0
@@ -50,6 +50,20 @@ extern unsigned ScreenBitMap2;
 extern unsigned ScreenBitMap3;
 extern unsigned ScreenBitMap4;
 extern unsigned ScreenBitMap5;
+
+
+// Variable for new task piece tracking
+
+char bin0B = FLAT;
+char bin1B = FLAT;
+char bin0BL = 0;
+char bin1BL = 0;
+
+
+char bin0A = FLAT;
+char bin1A = FLAT;
+char bin0AL = 0;
+char bin1AL = 0;
 
 void addToQueue(int pieceID, int cmd, int direction){
 
@@ -145,19 +159,6 @@ while (1)
   }
 }
 
-int getFirstOne(int column){
-  int i;
-  int tmp = 1;
-
-  for(i=15;i>=0;i--){
-    if((tmp & column)==tmp){
-      return i+1;
-    }else{
-      tmp = tmp<<1;
-    }
-  }
-  return i+1;
-}
 
 void NewPieceTask(void)
 {
@@ -167,47 +168,26 @@ void NewPieceTask(void)
   int col3Level;
   int col4Level;
   int col5Level;
-  char bin0 = FLAT;
-  char bin1 = FLAT;
 
   while(1){
+    bin0B = bin0A;
+    bin1B = bin1A;
+    bin0BL = bin0AL;
+    bin1BL = bin1AL;
+    if(DEBUG==1){
+      printInt(bin0B);
+      printInt(bin1B);
+      printInt(bin0BL);
+      printInt(bin1BL);
+      printNewLine();
+    }
+
     YKSemPend(NPSemPtr);
     if(DEBUG==1){
       printString("NP NPTSK \r\n");
     }
-    YKSemPend(TDSemPtr);
-    col0Level = getFirstOne(ScreenBitMap0);
-    col1Level = getFirstOne(ScreenBitMap1);
-    col2Level = getFirstOne(ScreenBitMap2);
-    col3Level = getFirstOne(ScreenBitMap3);
-    col4Level = getFirstOne(ScreenBitMap4);
-    col5Level = getFirstOne(ScreenBitMap5);
-    if(DEBUG==1){
-      printInt(col0Level);
-      printInt(col1Level);
-      printInt(col2Level);
-      printInt(col3Level);
-      printInt(col4Level);
-      printInt(col5Level);
-      printNewLine();
-    }
-    if((col0Level == col1Level) && (col1Level==col2Level)){
-      bin0 = FLAT;
-    }else{
-      bin0 = CORNER;
-    }
-    if((col3Level == col4Level) && (col4Level==col5Level)){
-      bin1 = FLAT;
-    }else{
-      bin1 = CORNER;
-    }
-    if(DEBUG==1){
-      printString("B0:");
-      printInt(bin0);
-      printString(" B1:");
-      printInt(bin1);
-      printNewLine();
-    }
+
+
     //Let's Just get the piece off the wall for now
     if(NewPieceColumn==0){
       setColumn(1);
@@ -222,37 +202,53 @@ void NewPieceTask(void)
       if(NewPieceOrientation==1){ // if the piece is vertical
         addToQueue(NewPieceID, ROTATE, CW);
       }
-      if(bin0==FLAT && bin1==FLAT){
-        if(col0Level < col5Level){
+      if(bin0B==FLAT && bin1B==FLAT){
+        if(bin0BL < bin1BL){
           setColumn(1);
+          bin0AL++;
+          bin0A = FLAT;
         }else{
           setColumn(4);
+          bin1AL++;
+          bin1A = FLAT;
 
         }
       }else{
-        if(bin0==FLAT){
+        if(bin0B==FLAT){
           setColumn(1);
+          bin0AL++;
+          bin0A = FLAT;
         }else{
           setColumn(4);
+          bin1AL++;
+          bin1A = FLAT;
         }
       }
 
 
     }else{// the piece is a corner piece
-      if((bin0==FLAT) && (bin1==FLAT)){
-        if(col0Level < col5Level){
+      if((bin0B==FLAT) && (bin1B==FLAT)){
+        if(bin0BL < bin1BL){
           setOrientation(0);
           setColumn(0);
+          bin0AL++;
+          bin0A = CORNER;
         }else{
           setOrientation(1);
           setColumn(5);
+          bin1AL++;
+          bin1A = CORNER;
         }
-      }else if(bin0 != FLAT){
+      }else if(bin0B != FLAT){
         setOrientation(2);
         setColumn(2);
+        bin0AL++;
+        bin0A = FLAT;
       }else{
         setOrientation(3);
         setColumn(3);
+        bin1AL++;
+        bin1A = FLAT;
       }
     }
   }
@@ -306,10 +302,9 @@ int main(void)
   YKNewTask(StatsTask, (void *) &StatsTaskStk[TASK_STACK_SIZE], 50);
 
   SeedSimptris(10947);
-
+  //87245
   NPSemPtr = YKSemCreate(0);
   RCSemPtr = YKSemCreate(1);
-  TDSemPtr = YKSemCreate(1);
 
 
   YKRun();

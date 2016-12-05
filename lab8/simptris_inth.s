@@ -4,11 +4,11 @@
 	jmp	main	; Jump to program start
 	ALIGN	2
 gameOverISRC:
-	; >>>>> Line:	12
+	; >>>>> Line:	14
 	; >>>>> void gameOverISRC(void) { 
 	jmp	L_simptris_inth_1
 L_simptris_inth_2:
-	; >>>>> Line:	13
+	; >>>>> Line:	15
 	; >>>>> exit(0); 
 	xor	al, al
 	push	ax
@@ -23,11 +23,11 @@ L_simptris_inth_1:
 	jmp	L_simptris_inth_2
 	ALIGN	2
 newPieceISRC:
-	; >>>>> Line:	16
+	; >>>>> Line:	18
 	; >>>>> void newPieceISRC(void) { 
 	jmp	L_simptris_inth_4
 L_simptris_inth_5:
-	; >>>>> Line:	18
+	; >>>>> Line:	20
 	; >>>>> YKSemPost(NPSemPtr); 
 	push	word [NPSemPtr]
 	call	YKSemPost
@@ -41,11 +41,11 @@ L_simptris_inth_4:
 	jmp	L_simptris_inth_5
 	ALIGN	2
 receivedCommandISRC:
-	; >>>>> Line:	21
+	; >>>>> Line:	23
 	; >>>>> void receivedCommandISRC(void) { 
 	jmp	L_simptris_inth_7
 L_simptris_inth_8:
-	; >>>>> Line:	22
+	; >>>>> Line:	24
 	; >>>>> YKSemPost(RCSemPtr); 
 	push	word [RCSemPtr]
 	call	YKSemPost
@@ -59,15 +59,12 @@ L_simptris_inth_7:
 	jmp	L_simptris_inth_8
 	ALIGN	2
 touchdownISRC:
-	; >>>>> Line:	25
-	; >>>>> void touchdownISRC(void) { 
+	; >>>>> Line:	27
+	; >>>>> voi 
 	jmp	L_simptris_inth_10
 L_simptris_inth_11:
-	; >>>>> Line:	26
-	; >>>>> YKSemPost(TDS 
-	push	word [TDSemPtr]
-	call	YKSemPost
-	add	sp, 2
+	; >>>>> Line:	29
+	; >>>>> } 
 	mov	sp, bp
 	pop	bp
 	ret
@@ -77,12 +74,16 @@ L_simptris_inth_10:
 	jmp	L_simptris_inth_11
 	ALIGN	2
 lineclearISRC:
-	; >>>>> Line:	30
+	; >>>>> Line:	31
 	; >>>>> void lineclearISRC(void) { 
 	jmp	L_simptris_inth_13
 L_simptris_inth_14:
 	; >>>>> Line:	32
-	; >>>>> } 
+	; >>>>> bin0AL--; 
+	dec	byte [bin0AL]
+	; >>>>> Line:	33
+	; >>>>> bin1AL--; 
+	dec	byte [bin1AL]
 	mov	sp, bp
 	pop	bp
 	ret

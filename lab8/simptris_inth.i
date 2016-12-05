@@ -125,6 +125,8 @@ void YKEventReset(YKEVENT *event, unsigned eventMask);
 extern YKSEM *NPSemPtr;
 extern YKSEM *RCSemPtr;
 extern YKSEM *TDSemPtr;
+extern char bin0AL;
+extern char bin1AL;
  void gameOverISRC(void) {
     exit(0);
  }
@@ -139,10 +141,10 @@ extern YKSEM *TDSemPtr;
  }
 
  void touchdownISRC(void) {
-   YKSemPost(TDSemPtr);
 
  }
 
  void lineclearISRC(void) {
-
+   bin0AL--;
+   bin1AL--;
  }

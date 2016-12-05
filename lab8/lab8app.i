@@ -141,7 +141,7 @@ void SeedSimptris(long seed);
 void StartSimptris(void);
 # 11 "lab8app.c" 2
 # 27 "lab8app.c"
-struct msg MsgArray[20];
+struct msg MsgArray[80];
 int nextMsg = 0;
 
 
@@ -150,7 +150,7 @@ int NewPieceTaskStk[512];
 int StatsTaskStk[512];
 
 
-void *MsgQ[10];
+void *MsgQ[40];
 YKQ *MsgQPtr;
 
 YKSEM *RCSemPtr;
@@ -168,6 +168,20 @@ extern unsigned ScreenBitMap3;
 extern unsigned ScreenBitMap4;
 extern unsigned ScreenBitMap5;
 
+
+
+
+char bin0B = 0;
+char bin1B = 0;
+char bin0BL = 0;
+char bin1BL = 0;
+
+
+char bin0A = 0;
+char bin1A = 0;
+char bin0AL = 0;
+char bin1AL = 0;
+
 void addToQueue(int pieceID, int cmd, int direction){
 
   MsgArray[nextMsg].pieceID = pieceID;
@@ -183,7 +197,7 @@ void addToQueue(int pieceID, int cmd, int direction){
 
   if (YKQPost(MsgQPtr, (void *) &(MsgArray[nextMsg])) == 0)
    printString("  addToQ: queue overflow! \n");
- else if (++nextMsg >= 20)
+ else if (++nextMsg >= 80)
    nextMsg = 0;
 
 }
@@ -262,19 +276,6 @@ while (1)
   }
 }
 
-int getFirstOne(int column){
-  int i;
-  int tmp = 1;
-
-  for(i=15;i>=0;i--){
-    if((tmp & column)==tmp){
-      return i+1;
-    }else{
-      tmp = tmp<<1;
-    }
-  }
-  return i+1;
-}
 
 void NewPieceTask(void)
 {
@@ -284,47 +285,26 @@ void NewPieceTask(void)
   int col3Level;
   int col4Level;
   int col5Level;
-  char bin0 = 0;
-  char bin1 = 0;
 
   while(1){
+    bin0B = bin0A;
+    bin1B = bin1A;
+    bin0BL = bin0AL;
+    bin1BL = bin1AL;
+    if(0==1){
+      printInt(bin0B);
+      printInt(bin1B);
+      printInt(bin0BL);
+      printInt(bin1BL);
+      printNewLine();
+    }
+
     YKSemPend(NPSemPtr);
     if(0==1){
       printString("NP NPTSK \r\n");
     }
-    YKSemPend(TDSemPtr);
-    col0Level = getFirstOne(ScreenBitMap0);
-    col1Level = getFirstOne(ScreenBitMap1);
-    col2Level = getFirstOne(ScreenBitMap2);
-    col3Level = getFirstOne(ScreenBitMap3);
-    col4Level = getFirstOne(ScreenBitMap4);
-    col5Level = getFirstOne(ScreenBitMap5);
-    if(0==1){
-      printInt(col0Level);
-      printInt(col1Level);
-      printInt(col2Level);
-      printInt(col3Level);
-      printInt(col4Level);
-      printInt(col5Level);
-      printNewLine();
-    }
-    if((col0Level == col1Level) && (col1Level==col2Level)){
-      bin0 = 0;
-    }else{
-      bin0 = 1;
-    }
-    if((col3Level == col4Level) && (col4Level==col5Level)){
-      bin1 = 0;
-    }else{
-      bin1 = 1;
-    }
-    if(0==1){
-      printString("B0:");
-      printInt(bin0);
-      printString(" B1:");
-      printInt(bin1);
-      printNewLine();
-    }
+
+
 
     if(NewPieceColumn==0){
       setColumn(1);
@@ -339,37 +319,53 @@ void NewPieceTask(void)
       if(NewPieceOrientation==1){
         addToQueue(NewPieceID, 1, 1);
       }
-      if(bin0==0 && bin1==0){
-        if(col0Level < col5Level){
+      if(bin0B==0 && bin1B==0){
+        if(bin0BL < bin1BL){
           setColumn(1);
+          bin0AL++;
+          bin0A = 0;
         }else{
           setColumn(4);
+          bin1AL++;
+          bin1A = 0;
 
         }
       }else{
-        if(bin0==0){
+        if(bin0B==0){
           setColumn(1);
+          bin0AL++;
+          bin0A = 0;
         }else{
           setColumn(4);
+          bin1AL++;
+          bin1A = 0;
         }
       }
 
 
     }else{
-      if((bin0==0) && (bin1==0)){
-        if(col0Level < col5Level){
+      if((bin0B==0) && (bin1B==0)){
+        if(bin0BL < bin1BL){
           setOrientation(0);
           setColumn(0);
+          bin0AL++;
+          bin0A = 1;
         }else{
           setOrientation(1);
           setColumn(5);
+          bin1AL++;
+          bin1A = 1;
         }
-      }else if(bin0 != 0){
+      }else if(bin0B != 0){
         setOrientation(2);
         setColumn(2);
+        bin0AL++;
+        bin0A = 0;
       }else{
         setOrientation(3);
         setColumn(3);
+        bin1AL++;
+        bin1A = 0;
       }
     }
   }
@@ -418,7 +414,7 @@ int main(void)
 {
   YKInitialize();
 
-  MsgQPtr = YKQCreate(MsgQ, 10);
+  MsgQPtr = YKQCreate(MsgQ, 40);
 
   YKNewTask(StatsTask, (void *) &StatsTaskStk[512], 50);
 
@@ -426,7 +422,6 @@ int main(void)
 
   NPSemPtr = YKSemCreate(0);
   RCSemPtr = YKSemCreate(1);
-  TDSemPtr = YKSemCreate(1);
 
 
   YKRun();
